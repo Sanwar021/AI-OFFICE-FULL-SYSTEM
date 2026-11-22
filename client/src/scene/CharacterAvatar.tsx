@@ -31,15 +31,10 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
   const isThinking = employee.animationState === 'thinking' || employee.status === 'thinking';
   const isDelivering = employee.animationState === 'delivering';
 
-  // Base desk seating coordinates & correct architectural facing
+  // Base desk seating coordinates
   const deskX = employee.deskPosition.x;
   const deskZ = employee.deskPosition.z;
-  const isNorthDesk = employee.deskPosition.rotationY === 0;
-
-  // Seated employee faces their desk and monitor
-  const personFacingRotY = isNorthDesk ? Math.PI : 0;
-  // Desktop monitor faces the seated employee
-  const monitorFacingRotY = isNorthDesk ? 0 : Math.PI;
+  const facingRotY = employee.deskPosition.rotationY;
 
   // Screen texture dynamically generated for this employee
   const screenTexture = useMemo(
@@ -124,14 +119,14 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
     if (!groupRef.current) return;
 
     if (!isWalking) {
-      // Natural seated position in the office chair pulled up to desk
-      const chairDist = isNorthDesk ? 0.60 : -0.60;
+      // Natural seated position in the office chair
+      const chairDist = facingRotY === 0 ? 0.68 : -0.68;
       const targetZ = deskZ + chairDist;
       groupRef.current.position.set(deskX, 0.05, targetZ);
-      groupRef.current.rotation.y = personFacingRotY;
+      groupRef.current.rotation.y = facingRotY;
 
       // Subtle breathing torso bob
-      groupRef.current.position.y = 0.05 + Math.sin(t * 2 + seed) * 0.005;
+      groupRef.current.position.y = 0.05 + Math.sin(t * 2 + seed) * 0.006;
 
       // Animation: Typing
       if (isTyping) {
@@ -206,7 +201,7 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
   return (
     <group>
       {/* 1. Live Desk Monitor with Real-Time Screen Content on Employee's Station */}
-      <group position={[deskX, 0.75, deskZ]} rotation={[0, monitorFacingRotY, 0]}>
+      <group position={[deskX, 0.75, deskZ]} rotation={[0, facingRotY, 0]}>
         {/* Leather Blotter Pad */}
         <mesh position={[0, 0.005, 0.1]} receiveShadow>
           <boxGeometry args={[0.84, 0.004, 0.44]} />
@@ -277,54 +272,41 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
           </mesh>
         )}
 
-        {/* 3D Floating Nameplate Badge (Smart Responsive Density) */}
-        <Html position={[0, 1.88, 0]} center zIndexRange={[100, 0]}>
+        {/* 3D Floating Nameplate Badge - Staggered Heights for Zero Occlusion & High Readability */}
+        <Html position={[0, 1.82 + Math.floor(employee.deskIndex / 2) * 0.16, 0]} center zIndexRange={[100, 0]}>
           <div
             onClick={(e) => {
               e.stopPropagation();
               onSelect();
             }}
             style={{ pointerEvents: 'auto' }}
-            className="select-none"
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full shadow-lg border transition-all cursor-pointer select-none ${
+              isSelected
+                ? 'bg-teal-700 text-white border-teal-300 ring-2 ring-teal-400 scale-105 shadow-teal-700/30'
+                : 'bg-white/95 backdrop-blur-md text-slate-900 border-slate-300/80 hover:bg-white hover:scale-105'
+            }`}
           >
-            {isSelected ? (
-              // Selected: Full prominent glass badge with active role tag and glow
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-teal-600 text-white border border-teal-300 ring-2 ring-teal-400 shadow-xl scale-105 cursor-pointer transition">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-ping" />
-                <span className="whitespace-nowrap">{employee.name}</span>
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-teal-800/80 font-mono tracking-wide uppercase">
-                  {employee.role.split(' ')[0]}
-                </span>
-              </div>
-            ) : employee.status === 'working' || employee.status === 'thinking' ? (
-              // Active Work Status Pill
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/95 backdrop-blur-md shadow-md border border-slate-200 text-slate-800 hover:scale-105 cursor-pointer transition">
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    employee.status === 'working'
-                      ? 'bg-emerald-500 animate-pulse'
-                      : 'bg-amber-500 animate-pulse'
-                  }`}
-                />
-                <span className="whitespace-nowrap font-bold text-[11px]">{employee.name}</span>
-                <span className="text-[9px] font-bold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded-full">
-                  {employee.status === 'working' ? 'Writing' : 'Thinking'}
-                </span>
-              </div>
-            ) : (
-              // Unselected & Idle: Minimalist avatar pin dot that blooms on hover
-              <div className="group relative flex items-center justify-center cursor-pointer">
-                <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[9px] font-bold shadow-md border-2 border-white transition-all group-hover:w-auto group-hover:px-2 group-hover:py-0.5 group-hover:gap-1.5"
-                  style={{ backgroundColor: employee.avatarColor }}
-                >
-                  <span>{employee.name.split(' ').map((n) => n[0]).join('')}</span>
-                  <span className="hidden group-hover:inline font-bold text-[10px] whitespace-nowrap">
-                    {employee.name}
-                  </span>
-                </div>
-              </div>
-            )}
+            {/* Live Status Indicator Dot */}
+            <span
+              className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                employee.status === 'working'
+                  ? 'bg-emerald-500 animate-pulse ring-2 ring-emerald-300'
+                  : employee.status === 'thinking'
+                  ? 'bg-amber-500 animate-pulse ring-2 ring-amber-300'
+                  : 'bg-slate-400'
+              }`}
+            />
+            {/* Full Specialist Name */}
+            <span className="whitespace-nowrap font-bold text-xs tracking-tight text-inherit">
+              {employee.name}
+            </span>
+            {/* Role Specialty Tag */}
+            <span
+              className="text-[10px] px-2 py-0.5 rounded-full text-white font-extrabold uppercase shrink-0 tracking-wider shadow-xs"
+              style={{ backgroundColor: employee.avatarColor }}
+            >
+              {employee.role.split(' ')[0]}
+            </span>
           </div>
         </Html>
 

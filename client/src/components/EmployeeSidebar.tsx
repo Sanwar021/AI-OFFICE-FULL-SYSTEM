@@ -187,18 +187,27 @@ export const EmployeeSidebar: React.FC = () => {
                   />
                 </div>
 
-                {/* Details */}
+                {/* Details - Ultra Clear Readability */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-1">
                     <h3
-                      className={`text-xs font-bold truncate ${
-                        isSelected ? 'text-teal-900' : 'text-slate-800'
+                      className={`text-[13px] font-bold truncate ${
+                        isSelected ? 'text-teal-950 font-extrabold' : 'text-slate-900'
                       }`}
                     >
                       {emp.name}
                     </h3>
+                    <span className="text-[10px] font-bold text-slate-500 capitalize shrink-0">
+                      {emp.status === 'working' ? (
+                        <span className="text-emerald-700 font-extrabold">● Working</span>
+                      ) : emp.status === 'thinking' ? (
+                        <span className="text-amber-700 font-extrabold">● Thinking</span>
+                      ) : (
+                        <span>● Idle</span>
+                      )}
+                    </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 truncate font-medium">{emp.role}</p>
+                  <p className="text-xs text-slate-600 truncate font-semibold">{emp.role}</p>
                 </div>
 
                 {isSelected && <ChevronRight className="w-4 h-4 text-teal-600 shrink-0" />}
@@ -208,13 +217,13 @@ export const EmployeeSidebar: React.FC = () => {
         </div>
 
         {/* Footer info */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50/70">
-          <div className="flex items-center justify-between text-[11px] text-slate-600 font-medium">
-            <span className="flex items-center gap-1.5">
+        <div className="p-3 border-t border-slate-100 bg-slate-50/80">
+          <div className="flex items-center justify-between text-xs text-slate-700 font-semibold">
+            <span className="flex items-center gap-1.5 text-slate-600">
               <Sparkles className="w-3.5 h-3.5 text-teal-600" />
               Chief of Staff
             </span>
-            <span className="font-bold text-teal-800">Victoria Sterling</span>
+            <span className="font-extrabold text-teal-900">Victoria Sterling</span>
           </div>
         </div>
       </aside>
