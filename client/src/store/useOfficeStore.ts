@@ -10,6 +10,10 @@ interface OfficeState {
   // Camera
   cameraPreset: CameraPreset;
   setCameraPreset: (preset: CameraPreset) => void;
+  zoomDelta: number;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  resetCamera: () => void;
 
   // Selected Employee
   selectedEmployeeId: string | null;
@@ -27,12 +31,27 @@ interface OfficeState {
   appendTaskStream: (chunk: string) => void;
   addTask: (task: Task) => void;
   updateTask: (taskId: string, updates: Partial<Task>) => void;
+  selectedTaskId: string | null;
+  setSelectedTaskId: (id: string | null) => void;
 
-  // UI state
+  // Prompt prefill
+  newTaskInitialPrompt: string;
+  setNewTaskInitialPrompt: (prompt: string) => void;
+
+  // UI state & Modals
   isNewTaskModalOpen: boolean;
   setIsNewTaskModalOpen: (open: boolean) => void;
   isSettingsModalOpen: boolean;
   setIsSettingsModalOpen: (open: boolean) => void;
+  isTasksModalOpen: boolean;
+  setIsTasksModalOpen: (open: boolean) => void;
+  isReportsModalOpen: boolean;
+  setIsReportsModalOpen: (open: boolean) => void;
+  isTaskDetailsModalOpen: boolean;
+  setIsTaskDetailsModalOpen: (open: boolean) => void;
+  isNotificationsOpen: boolean;
+  setIsNotificationsOpen: (open: boolean) => void;
+  toggleNotifications: () => void;
   isMobileDrawerOpen: boolean;
   setIsMobileDrawerOpen: (open: boolean) => void;
   isInspectorOpen: boolean;
@@ -43,6 +62,10 @@ interface OfficeState {
   isTourActive: boolean;
   setIsTourActive: (active: boolean) => void;
   toggleTour: () => void;
+
+  // Filter
+  teamFilter: 'all' | 'working' | 'approval' | 'idle';
+  setTeamFilter: (filter: 'all' | 'working' | 'approval' | 'idle') => void;
 }
 
 const initialEmployees: Employee[] = [
@@ -200,6 +223,101 @@ const initialEmployees: Employee[] = [
   },
 ];
 
+const initialTasks: Task[] = [
+  {
+    id: 'task-1',
+    title: 'Develop Q3 Go-To-Market Strategy',
+    instructions: 'Analyze enterprise customer segments, map competitive positioning, and outline Q3 sales motion.',
+    assignedEmployeeId: 'emp-1',
+    status: 'running',
+    priority: 'urgent',
+    createdAt: 'Today at 9:15 AM',
+    startedAt: '9:15 AM',
+    outputSummary: 'GTM framework formulated with ICP matrix, outbound cadences, and pipeline targets.',
+  },
+  {
+    id: 'task-2',
+    title: 'Author High-Authority AEO Strategy Guide',
+    instructions: 'Optimize brand citations and knowledge graph prominence for AI search engines (Perplexity, ChatGPT, Gemini).',
+    assignedEmployeeId: 'emp-2',
+    status: 'running',
+    priority: 'high',
+    createdAt: 'Today at 9:30 AM',
+    startedAt: '9:30 AM',
+    outputSummary: 'Complete authoritative guide with structured data markup and answer engine indexing.',
+  },
+  {
+    id: 'task-3',
+    title: 'React 19 & Tailwind 4 Performance Optimization',
+    instructions: 'Refactor component bundle sizes, audit Core Web Vitals, and implement zero-layout-shift R3F canvas.',
+    assignedEmployeeId: 'emp-3',
+    status: 'running',
+    priority: 'high',
+    createdAt: 'Today at 9:45 AM',
+    startedAt: '9:45 AM',
+    outputSummary: 'Bundle size reduced by 34%, 60fps canvas render loop benchmarked.',
+  },
+  {
+    id: 'task-4',
+    title: 'Weekly Multi-Channel Brand Launch Drop',
+    instructions: 'Draft scheduled posts for X/Twitter and LinkedIn highlighting virtual office features.',
+    assignedEmployeeId: 'emp-4',
+    status: 'needs_approval',
+    priority: 'medium',
+    createdAt: 'Today at 10:00 AM',
+    startedAt: '10:00 AM',
+    needsApprovalData: {
+      actionType: 'social_post_publish',
+      content: 'Excited to unveil our autonomous 3D office! Watch AI employees collaborate in real time with live monitor streams and automated document handoffs.',
+      destination: 'LinkedIn & X/Twitter Corporate Feeds',
+    },
+  },
+  {
+    id: 'task-5',
+    title: 'Cross-Platform Paid CPA Attribution Analysis',
+    instructions: 'Audit blended CAC across Google Search and Meta Ads campaigns for Q2-Q3.',
+    assignedEmployeeId: 'emp-5',
+    status: 'running',
+    priority: 'medium',
+    createdAt: 'Today at 10:15 AM',
+    startedAt: '10:15 AM',
+    outputSummary: 'Identified 22% CPA reduction opportunity by scaling high-intent search exact matches.',
+  },
+  {
+    id: 'task-6',
+    title: 'Enterprise Pipeline Outreach Sequence',
+    instructions: 'Qualify top 50 B2B SaaS target accounts and draft personalized multi-touch outbound cadences.',
+    assignedEmployeeId: 'emp-6',
+    status: 'running',
+    priority: 'high',
+    createdAt: 'Today at 10:20 AM',
+    startedAt: '10:20 AM',
+    outputSummary: 'Outbound sequence loaded with personalized pain-point hooks and demo scheduling triggers.',
+  },
+  {
+    id: 'task-7',
+    title: 'Tier-1 Customer Onboarding Ticket Diagnosis',
+    instructions: 'Review resolution times, identify top 3 friction points in workspace setup, and craft FAQ response templates.',
+    assignedEmployeeId: 'emp-7',
+    status: 'running',
+    priority: 'medium',
+    createdAt: 'Today at 10:30 AM',
+    startedAt: '10:30 AM',
+    outputSummary: 'Drafted 8 automated resolution templates for common webhook and API key configuration questions.',
+  },
+  {
+    id: 'task-8',
+    title: 'Executive Multi-Agent Objective DAG Coordination',
+    instructions: 'Orchestrate cross-functional priorities, manage dependency blocks, and compile standup briefing.',
+    assignedEmployeeId: 'emp-8',
+    status: 'running',
+    priority: 'urgent',
+    createdAt: 'Today at 8:45 AM',
+    startedAt: '8:45 AM',
+    outputSummary: 'Daily sprint plan synchronized across all 8 specialists. Critical paths unblocked.',
+  },
+];
+
 export const useOfficeStore = create<OfficeState>((set) => ({
   timeOfDay: 'day',
   toggleTimeOfDay: () =>
@@ -208,6 +326,10 @@ export const useOfficeStore = create<OfficeState>((set) => ({
 
   cameraPreset: 'overview',
   setCameraPreset: (preset) => set({ cameraPreset: preset }),
+  zoomDelta: 0,
+  zoomIn: () => set((state) => ({ zoomDelta: state.zoomDelta + 1 })),
+  zoomOut: () => set((state) => ({ zoomDelta: state.zoomDelta - 1 })),
+  resetCamera: () => set({ cameraPreset: 'overview', zoomDelta: 0 }),
 
   selectedEmployeeId: 'emp-1',
   selectEmployee: (id) =>
@@ -237,7 +359,9 @@ export const useOfficeStore = create<OfficeState>((set) => ({
       ),
     })),
 
-  tasks: [],
+  tasks: initialTasks,
+  selectedTaskId: 'task-1',
+  setSelectedTaskId: (id) => set({ selectedTaskId: id }),
   activeTaskStream: '',
   setActiveTaskStream: (stream) => set({ activeTaskStream: stream }),
   appendTaskStream: (chunk) =>
@@ -248,10 +372,22 @@ export const useOfficeStore = create<OfficeState>((set) => ({
       tasks: state.tasks.map((t) => (t.id === taskId ? { ...t, ...updates } : t)),
     })),
 
+  newTaskInitialPrompt: '',
+  setNewTaskInitialPrompt: (prompt) => set({ newTaskInitialPrompt: prompt }),
+
   isNewTaskModalOpen: false,
   setIsNewTaskModalOpen: (open) => set({ isNewTaskModalOpen: open }),
   isSettingsModalOpen: false,
   setIsSettingsModalOpen: (open) => set({ isSettingsModalOpen: open }),
+  isTasksModalOpen: false,
+  setIsTasksModalOpen: (open) => set({ isTasksModalOpen: open }),
+  isReportsModalOpen: false,
+  setIsReportsModalOpen: (open) => set({ isReportsModalOpen: open }),
+  isTaskDetailsModalOpen: false,
+  setIsTaskDetailsModalOpen: (open) => set({ isTaskDetailsModalOpen: open }),
+  isNotificationsOpen: false,
+  setIsNotificationsOpen: (open) => set({ isNotificationsOpen: open }),
+  toggleNotifications: () => set((state) => ({ isNotificationsOpen: !state.isNotificationsOpen })),
   isMobileDrawerOpen: false,
   setIsMobileDrawerOpen: (open) => set({ isMobileDrawerOpen: open }),
   isInspectorOpen: false,
@@ -262,4 +398,7 @@ export const useOfficeStore = create<OfficeState>((set) => ({
   isTourActive: false,
   setIsTourActive: (active) => set({ isTourActive: active }),
   toggleTour: () => set((state) => ({ isTourActive: !state.isTourActive, cameraPreset: 'overview' })),
+
+  teamFilter: 'all',
+  setTeamFilter: (filter) => set({ teamFilter: filter }),
 }));

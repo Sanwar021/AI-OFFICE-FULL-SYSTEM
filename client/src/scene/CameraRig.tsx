@@ -14,11 +14,33 @@ export const CameraRig: React.FC<CameraRigProps> = ({ preset, selectedEmployee }
   const { camera } = useThree();
   const controlsRef = useRef<any>(null);
   const isTourActive = useOfficeStore((state) => state.isTourActive);
+  const zoomDelta = useOfficeStore((state) => state.zoomDelta);
+  const prevZoomDelta = useRef(0);
   const tourAngle = useRef(0);
 
   // Target camera position and look-at point - Elevated perspective matching Figma design
   const targetCamPos = useRef(new THREE.Vector3(-2.4, 4.8, 8.2));
   const targetLookAt = useRef(new THREE.Vector3(0.0, 0.5, 0.8));
+
+  // Handle Zoom In / Zoom Out smoothly
+  useEffect(() => {
+    if (zoomDelta !== prevZoomDelta.current) {
+      const diff = zoomDelta - prevZoomDelta.current;
+      prevZoomDelta.current = zoomDelta;
+      const dir = new THREE.Vector3().subVectors(targetCamPos.current, targetLookAt.current);
+      if (diff > 0) {
+        if (dir.length() > 2.5) {
+          dir.multiplyScalar(0.8);
+          targetCamPos.current.copy(targetLookAt.current).add(dir);
+        }
+      } else {
+        if (dir.length() < 14) {
+          dir.multiplyScalar(1.25);
+          targetCamPos.current.copy(targetLookAt.current).add(dir);
+        }
+      }
+    }
+  }, [zoomDelta]);
 
   useEffect(() => {
     if (preset === 'overview') {

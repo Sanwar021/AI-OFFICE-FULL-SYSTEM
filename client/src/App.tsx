@@ -5,11 +5,15 @@ import { TeamListCard } from './components/dashboard/TeamListCard';
 import { CenterOfficeCard } from './components/dashboard/CenterOfficeCard';
 import { EmployeeOverviewCard } from './components/dashboard/EmployeeOverviewCard';
 import { BottomPromptBar } from './components/dashboard/BottomPromptBar';
+import { NotificationsDropdown } from './components/dashboard/NotificationsDropdown';
 import { NewTaskModal } from './components/modals/NewTaskModal';
 import { PlanPreviewModal } from './components/modals/PlanPreviewModal';
 import { ApprovalModal } from './components/modals/ApprovalModal';
 import { SettingsModal } from './components/modals/SettingsModal';
 import { RoutinesModal } from './components/modals/RoutinesModal';
+import { TasksModal } from './components/modals/TasksModal';
+import { TaskDetailsModal } from './components/modals/TaskDetailsModal';
+import { ReportsModal } from './components/modals/ReportsModal';
 import { useOfficeStore } from './store/useOfficeStore';
 import { useSSE } from './hooks/useSSE';
 import { Menu, X } from 'lucide-react';
@@ -20,6 +24,9 @@ export const App: React.FC = () => {
 
   const setIsNewTaskModalOpen = useOfficeStore((state) => state.setIsNewTaskModalOpen);
   const setIsSettingsModalOpen = useOfficeStore((state) => state.setIsSettingsModalOpen);
+  const setNewTaskInitialPrompt = useOfficeStore((state) => state.setNewTaskInitialPrompt);
+  const setIsNotificationsOpen = useOfficeStore((state) => state.setIsNotificationsOpen);
+  const setIsTaskDetailsModalOpen = useOfficeStore((state) => state.setIsTaskDetailsModalOpen);
 
   const [activePlan, setActivePlan] = useState<any | null>(null);
   const [isApprovalsOpen, setIsApprovalsOpen] = useState(false);
@@ -30,7 +37,7 @@ export const App: React.FC = () => {
   const [mobileTab, setMobileTab] = useState<'office' | 'team' | 'employee'>('office');
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-[#F8F9FA] flex font-sans text-slate-800 antialiased select-none">
+    <div className="w-screen h-screen overflow-hidden bg-[#F8F9FA] flex font-sans text-slate-800 antialiased select-none relative">
       {/* Desktop Left Sidebar (>= 1024px) */}
       <div className="hidden lg:block h-full shrink-0">
         <Sidebar
@@ -83,7 +90,7 @@ export const App: React.FC = () => {
       )}
 
       {/* Main Workspace Area */}
-      <main className="flex-1 h-full flex flex-col justify-between overflow-y-auto p-3 sm:p-5 lg:p-6 gap-3 sm:gap-4 bg-[#F8F9FA]">
+      <main className="flex-1 h-full flex flex-col justify-between overflow-y-auto p-3 sm:p-5 lg:p-6 gap-3 sm:gap-4 bg-[#F8F9FA] relative">
         {/* Top Header Row with Mobile Menu Button */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between lg:hidden pb-1 border-b border-slate-200">
@@ -168,9 +175,17 @@ export const App: React.FC = () => {
         <BottomPromptBar
           onOpenNewTask={() => setIsNewTaskModalOpen(true)}
           onOpenSettings={() => setIsSettingsModalOpen(true)}
-          onSubmitPrompt={(_prompt) => {
+          onSubmitPrompt={(prompt) => {
+            setNewTaskInitialPrompt(prompt);
             setIsNewTaskModalOpen(true);
           }}
+        />
+
+        {/* Floating Notifications Popover */}
+        <NotificationsDropdown
+          onOpenApprovals={() => setIsApprovalsOpen(true)}
+          onOpenTaskDetails={() => setIsTaskDetailsModalOpen(true)}
+          onClose={() => setIsNotificationsOpen(false)}
         />
       </main>
 
@@ -184,6 +199,9 @@ export const App: React.FC = () => {
       <ApprovalModal isOpen={isApprovalsOpen} onClose={() => setIsApprovalsOpen(false)} />
       <SettingsModal />
       <RoutinesModal isOpen={isRoutinesOpen} onClose={() => setIsRoutinesOpen(false)} />
+      <TasksModal />
+      <TaskDetailsModal />
+      <ReportsModal />
     </div>
   );
 };

@@ -29,6 +29,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const employees = useOfficeStore((state) => state.employees);
   const activeCount = employees.filter((e) => e.status !== 'idle').length;
+  const resetCamera = useOfficeStore((state) => state.resetCamera);
+  const setIsTasksModalOpen = useOfficeStore((state) => state.setIsTasksModalOpen);
+  const setIsReportsModalOpen = useOfficeStore((state) => state.setIsReportsModalOpen);
+  const toggleTour = useOfficeStore((state) => state.toggleTour);
+  const selectEmployee = useOfficeStore((state) => state.selectEmployee);
 
   return (
     <aside className="w-64 h-full bg-white border-r border-slate-200/80 flex flex-col justify-between p-4 shrink-0 select-none">
@@ -45,7 +50,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Workspace Card */}
-        <div className="flex items-center justify-between p-2 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50 transition cursor-pointer shadow-2xs">
+        <div
+          onClick={onOpenSettings}
+          className="flex items-center justify-between p-2 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+          title="Open Workspace Settings"
+        >
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-700 text-xs shadow-2xs">
               S
@@ -72,7 +81,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Virtual Office (Active) */}
-          <button className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#EAF3ED] text-[#1E4E38] font-semibold text-xs transition cursor-pointer">
+          <button
+            onClick={resetCamera}
+            className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#EAF3ED] text-[#1E4E38] font-semibold text-xs transition cursor-pointer"
+            title="Focus Virtual Office"
+          >
             <div className="flex items-center gap-2.5">
               <Building2 className="w-4 h-4 text-[#1E4E38]" />
               <span>Virtual Office</span>
@@ -80,7 +93,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
 
           {/* Tasks */}
-          <button className="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer">
+          <button
+            onClick={() => setIsTasksModalOpen(true)}
+            className="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer"
+            title="View Workspace Tasks"
+          >
             <div className="flex items-center gap-2.5">
               <CheckSquare className="w-4 h-4 text-slate-400" />
               <span>Tasks</span>
@@ -91,7 +108,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
 
           {/* AI Employees */}
-          <button className="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer">
+          <button
+            onClick={() => selectEmployee(employees[0]?.id || null)}
+            className="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer"
+            title="Focus AI Employees"
+          >
             <div className="flex items-center gap-2.5">
               <Users className="w-4 h-4 text-slate-400" />
               <span>AI Employees</span>
@@ -124,7 +145,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
 
           {/* Reports */}
-          <button className="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer">
+          <button
+            onClick={() => setIsReportsModalOpen(true)}
+            className="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer"
+            title="View Executive Reports"
+          >
             <div className="flex items-center gap-2.5">
               <BarChart3 className="w-4 h-4 text-slate-400" />
               <span>Reports</span>
@@ -136,7 +161,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Bottom Area: Status Card, Utilities & User Profile */}
       <div className="flex flex-col gap-3">
         {/* "Your office is in motion" Live Card */}
-        <div className="p-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 flex items-center justify-between shadow-2xs">
+        <div
+          onClick={() => setIsTasksModalOpen(true)}
+          className="p-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-100/70 transition cursor-pointer flex items-center justify-between shadow-2xs"
+          title="Click to view all active tasks"
+        >
           <div className="flex items-start gap-2.5">
             <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
               <Sparkles className="w-3.5 h-3.5" />
@@ -170,7 +199,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Settings className="w-4 h-4 text-slate-400" />
             <span>Settings</span>
           </button>
-          <button className="flex items-center justify-between px-3 py-1.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer">
+          <button
+            onClick={toggleTour}
+            className="flex items-center justify-between px-3 py-1.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer"
+            title="Start Cinematic Office Tour"
+          >
             <div className="flex items-center gap-2.5">
               <HelpCircle className="w-4 h-4 text-slate-400" />
               <span>Help & getting started</span>
@@ -180,7 +213,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* User Profile */}
-        <div className="flex items-center justify-between pt-2 border-t border-slate-100 px-1">
+        <div
+          onClick={onOpenSettings}
+          className="flex items-center justify-between pt-2 border-t border-slate-100 px-1 cursor-pointer hover:bg-slate-50 rounded-xl p-1 transition"
+          title="Account & Workspace Settings"
+        >
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center font-bold text-amber-800 text-xs shadow-2xs">
               JD
@@ -190,7 +227,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span className="text-[11px] text-slate-500 font-medium">Workspace owner</span>
             </div>
           </div>
-          <button className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenSettings?.();
+            }}
+            className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+          >
             <MoreHorizontal className="w-4 h-4" />
           </button>
         </div>

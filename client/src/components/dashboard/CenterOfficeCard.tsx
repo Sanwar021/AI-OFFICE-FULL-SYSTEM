@@ -20,6 +20,9 @@ export const CenterOfficeCard: React.FC = () => {
 
   const cameraPreset = useOfficeStore((state) => state.cameraPreset);
   const setCameraPreset = useOfficeStore((state) => state.setCameraPreset);
+  const zoomIn = useOfficeStore((state) => state.zoomIn);
+  const zoomOut = useOfficeStore((state) => state.zoomOut);
+  const resetCamera = useOfficeStore((state) => state.resetCamera);
   const selectEmployee = useOfficeStore((state) => state.selectEmployee);
   const employees = useOfficeStore((state) => state.employees);
   const selectedEmployeeId = useOfficeStore((state) => state.selectedEmployeeId);
@@ -115,11 +118,15 @@ export const CenterOfficeCard: React.FC = () => {
 
       {/* Top Left Floating Tag: [🏢 Studio headquarters •] */}
       <div className="absolute top-3.5 left-3.5 z-10 pointer-events-auto">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-xs text-xs font-semibold text-slate-800">
+        <button
+          onClick={resetCamera}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-xs text-xs font-semibold text-slate-800 hover:bg-white transition cursor-pointer"
+          title="Reset to Studio Headquarters view"
+        >
           <Building2 className="w-3.5 h-3.5 text-slate-500" />
           <span>Studio headquarters</span>
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 ml-0.5" />
-        </div>
+        </button>
       </div>
 
       {/* Top Right Floating Button: [⛶ Fullscreen] */}
@@ -186,24 +193,14 @@ export const CenterOfficeCard: React.FC = () => {
       <div className="absolute bottom-3.5 right-3.5 z-10 pointer-events-auto flex flex-col gap-1">
         <div className="flex flex-col items-center p-1 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-md">
           <button
-            onClick={() => {
-              const canvas = containerRef.current?.querySelector('canvas');
-              if (canvas) {
-                canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: -120 }));
-              }
-            }}
+            onClick={zoomIn}
             className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition cursor-pointer"
             title="Zoom In"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => {
-              const canvas = containerRef.current?.querySelector('canvas');
-              if (canvas) {
-                canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 120 }));
-              }
-            }}
+            onClick={zoomOut}
             className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition cursor-pointer"
             title="Zoom Out"
           >
@@ -211,7 +208,7 @@ export const CenterOfficeCard: React.FC = () => {
           </button>
           <div className="w-3 h-px bg-slate-200 my-0.5" />
           <button
-            onClick={() => setCameraPreset('overview')}
+            onClick={resetCamera}
             className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition cursor-pointer"
             title="Reset View"
           >

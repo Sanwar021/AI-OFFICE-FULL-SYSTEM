@@ -27,6 +27,9 @@ export const BottomPromptBar: React.FC<BottomPromptBarProps> = ({
   const [promptText, setPromptText] = useState('');
   const timeOfDay = useOfficeStore((state) => state.timeOfDay);
   const toggleTimeOfDay = useOfficeStore((state) => state.toggleTimeOfDay);
+  const toggleNotifications = useOfficeStore((state) => state.toggleNotifications);
+  const setIsTasksModalOpen = useOfficeStore((state) => state.setIsTasksModalOpen);
+  const toggleTour = useOfficeStore((state) => state.toggleTour);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,8 +102,9 @@ export const BottomPromptBar: React.FC<BottomPromptBarProps> = ({
 
           {/* Notifications */}
           <button
+            onClick={toggleNotifications}
             className="p-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-600 transition cursor-pointer shadow-2xs relative"
-            title="Notifications"
+            title="Notifications & Activity Alerts"
           >
             <Bell className="w-4 h-4" />
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 ring-1 ring-white" />
@@ -110,7 +114,10 @@ export const BottomPromptBar: React.FC<BottomPromptBarProps> = ({
 
       {/* Latest Activity Ticker */}
       <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-        <div className="flex items-center gap-2">
+        <div
+          onClick={() => setIsTasksModalOpen(true)}
+          className="flex items-center gap-2 cursor-pointer hover:text-slate-800 transition"
+        >
           <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
             Latest activity
           </span>
@@ -122,7 +129,10 @@ export const BottomPromptBar: React.FC<BottomPromptBarProps> = ({
           </div>
         </div>
 
-        <button className="flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-slate-800 transition cursor-pointer">
+        <button
+          onClick={() => setIsTasksModalOpen(true)}
+          className="flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-slate-800 transition cursor-pointer"
+        >
           <span>View all activity</span>
           <ArrowRight className="w-3 h-3" />
         </button>
@@ -137,10 +147,14 @@ export const BottomPromptBar: React.FC<BottomPromptBarProps> = ({
             <span>Private by design</span>
           </span>
           <span>•</span>
-          <span className="flex items-center gap-1 text-slate-400">
+          <button
+            onClick={toggleTour}
+            className="flex items-center gap-1 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+            title="Start Cinematic 360 Tour"
+          >
             <span>Interactive prototype</span>
             <HelpCircle className="w-3 h-3 text-slate-400" />
-          </span>
+          </button>
         </div>
       </div>
     </div>

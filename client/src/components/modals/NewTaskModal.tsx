@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOfficeStore } from '../../store/useOfficeStore';
 import { X, Play, Sparkles, Send } from 'lucide-react';
 
@@ -11,14 +11,31 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
   const setIsNewTaskModalOpen = useOfficeStore((state) => state.setIsNewTaskModalOpen);
   const employees = useOfficeStore((state) => state.employees);
   const selectedEmployeeId = useOfficeStore((state) => state.selectedEmployeeId);
+  const newTaskInitialPrompt = useOfficeStore((state) => state.newTaskInitialPrompt);
+  const setNewTaskInitialPrompt = useOfficeStore((state) => state.setNewTaskInitialPrompt);
+  const updateEmployeeStatus = useOfficeStore((state) => state.updateEmployeeStatus);
 
   const [title, setTitle] = useState('');
   const [instructions, setInstructions] = useState('');
-  const [assignedEmployeeId, setAssignedEmployeeId] = useState(selectedEmployeeId || 'emp-8');
+  const [assignedEmployeeId, setAssignedEmployeeId] = useState(selectedEmployeeId || 'emp-1');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high' | 'urgent'>('medium');
   const [mode, setMode] = useState<'manual' | 'chief_plan'>('manual');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (isNewTaskModalOpen) {
+      if (selectedEmployeeId) {
+        setAssignedEmployeeId(selectedEmployeeId);
+      }
+      if (newTaskInitialPrompt) {
+        setTitle(newTaskInitialPrompt);
+        setInstructions(newTaskInitialPrompt);
+        setMode('chief_plan');
+        setNewTaskInitialPrompt('');
+      }
+    }
+  }, [isNewTaskModalOpen, newTaskInitialPrompt, selectedEmployeeId]);
 
   if (!isNewTaskModalOpen) return null;
 
@@ -57,7 +74,10 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
         });
         const data = await res.json();
         if (!data.success) throw new Error(data.error || 'Failed to create task.');
+        updateEmployeeStatus(assignedEmployeeId, 'working', 'typing');
         setIsNewTaskModalOpen(false);
+        setTitle('');
+        setInstructions('');
       }
     } catch (err: any) {
       setError(err.message || 'Error submitting task.');
