@@ -86,10 +86,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
       <div className="hidden lg:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/60 shadow-inner">
         <button
           onClick={() => setCameraPreset('overview')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
-            cameraPreset === 'overview' && !isTourActive
-              ? 'bg-white text-slate-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${cameraPreset === 'overview' && !isTourActive
+            ? 'bg-white text-slate-900 shadow-xs'
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Video className="w-3.5 h-3.5 text-teal-600" />
@@ -97,10 +96,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         </button>
         <button
           onClick={() => setCameraPreset('team')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
-            cameraPreset === 'team' && !isTourActive
-              ? 'bg-white text-slate-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${cameraPreset === 'team' && !isTourActive
+            ? 'bg-white text-slate-900 shadow-xs'
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Users className="w-3.5 h-3.5 text-teal-600" />
@@ -108,10 +106,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         </button>
         <button
           onClick={() => setCameraPreset('follow')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
-            cameraPreset === 'follow' && !isTourActive
-              ? 'bg-white text-slate-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${cameraPreset === 'follow' && !isTourActive
+            ? 'bg-white text-slate-900 shadow-xs'
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <User className="w-3.5 h-3.5 text-teal-600" />
@@ -121,11 +118,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         {/* 360° Cinematic Tour Toggle */}
         <button
           onClick={toggleTour}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
-            isTourActive
-              ? 'bg-teal-600 text-white shadow-xs animate-pulse font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${isTourActive
+            ? 'bg-teal-600 text-white shadow-xs animate-pulse font-bold'
+            : 'text-slate-600 hover:text-slate-900'
+            }`}
           title="Toggle Cinematic 360° Auto-Orbit"
           aria-label="Toggle Cinematic 360 Tour"
         >
@@ -140,8 +136,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         <button
           onClick={onOpenApprovals}
           className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition relative ${pendingApprovalsCount > 0
-              ? 'bg-purple-50 text-purple-800 border-purple-300 animate-pulse'
-              : 'text-slate-700 hover:bg-slate-100/80 border-slate-200/60'
+            ? 'bg-purple-50 text-purple-800 border-purple-300 animate-pulse'
+            : 'text-slate-700 hover:bg-slate-100/80 border-slate-200/60'
             }`}
           title="Human Approvals Gateway"
         >

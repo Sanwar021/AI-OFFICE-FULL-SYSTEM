@@ -6,9 +6,14 @@ import { CameraRig } from './CameraRig';
 import { DeskPod, LinearPendantLight, FiddleLeafPlant, CabinetWall } from './OfficeProps';
 import { CharacterAvatar } from './CharacterAvatar';
 import { WallTaskBoard } from './WallTaskBoard';
+import { PinsTracker, type PinPosition } from './PinsTracker';
 import { useOfficeStore } from '../store/useOfficeStore';
 
-export const OfficeScene: React.FC = () => {
+interface OfficeSceneProps {
+  onUpdatePins?: (pins: Record<string, PinPosition>) => void;
+}
+
+export const OfficeScene: React.FC<OfficeSceneProps> = ({ onUpdatePins }) => {
   const timeOfDay = useOfficeStore((state) => state.timeOfDay);
   const cameraPreset = useOfficeStore((state) => state.cameraPreset);
   const selectedEmployeeId = useOfficeStore((state) => state.selectedEmployeeId);
@@ -23,8 +28,8 @@ export const OfficeScene: React.FC = () => {
       <Canvas
         shadows
         camera={{
-          position: [-2.8, 2.6, 6.2],
-          fov: 48,
+          position: [-2.4, 4.8, 8.2],
+          fov: 46,
           near: 0.1,
           far: 50,
         }}
@@ -73,6 +78,9 @@ export const OfficeScene: React.FC = () => {
 
           {/* Interactive 65" Real-Time Task Board on central feature wall */}
           <WallTaskBoard position={[-3.88, 2.1, 0]} rotation={[0, Math.PI / 2, 0]} />
+
+          {/* 3D-to-2D Coordinate Tracker for Stable Pins Overlay */}
+          {onUpdatePins && <PinsTracker onUpdatePins={onUpdatePins} />}
         </Suspense>
       </Canvas>
     </div>

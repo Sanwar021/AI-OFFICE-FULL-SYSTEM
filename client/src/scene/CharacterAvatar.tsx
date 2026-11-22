@@ -1,6 +1,5 @@
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Employee } from '../types/office';
 import { createScreenTexture } from './textures';
@@ -271,44 +270,6 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
             <meshBasicMaterial color="#14b8a6" transparent opacity={0.8} side={THREE.DoubleSide} />
           </mesh>
         )}
-
-        {/* 3D Floating Nameplate Badge - Staggered Heights for Zero Occlusion & High Readability */}
-        <Html position={[0, 1.82 + Math.floor(employee.deskIndex / 2) * 0.16, 0]} center zIndexRange={[100, 0]}>
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect();
-            }}
-            style={{ pointerEvents: 'auto' }}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full shadow-lg border transition-all cursor-pointer select-none ${
-              isSelected
-                ? 'bg-teal-700 text-white border-teal-300 ring-2 ring-teal-400 scale-105 shadow-teal-700/30'
-                : 'bg-white/95 backdrop-blur-md text-slate-900 border-slate-300/80 hover:bg-white hover:scale-105'
-            }`}
-          >
-            {/* Live Status Indicator Dot */}
-            <span
-              className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                employee.status === 'working'
-                  ? 'bg-emerald-500 animate-pulse ring-2 ring-emerald-300'
-                  : employee.status === 'thinking'
-                  ? 'bg-amber-500 animate-pulse ring-2 ring-amber-300'
-                  : 'bg-slate-400'
-              }`}
-            />
-            {/* Full Specialist Name */}
-            <span className="whitespace-nowrap font-bold text-xs tracking-tight text-inherit">
-              {employee.name}
-            </span>
-            {/* Role Specialty Tag */}
-            <span
-              className="text-[10px] px-2 py-0.5 rounded-full text-white font-extrabold uppercase shrink-0 tracking-wider shadow-xs"
-              style={{ backgroundColor: employee.avatarColor }}
-            >
-              {employee.role.split(' ')[0]}
-            </span>
-          </div>
-        </Html>
 
         {/* Humanoid Body Group */}
         <group position={[0, 0, 0]}>

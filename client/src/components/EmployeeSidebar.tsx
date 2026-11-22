@@ -32,10 +32,10 @@ export const EmployeeSidebar: React.FC = () => {
 
   const filteredEmployees = searchQuery.trim()
     ? employees.filter(
-        (e) =>
-          e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          e.role.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      (e) =>
+        e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.role.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     : employees;
 
   return (
@@ -70,9 +70,8 @@ export const EmployeeSidebar: React.FC = () => {
                   key={emp.id}
                   onClick={() => selectEmployee(emp.id)}
                   title={`${emp.name} — ${emp.role} (${emp.status})`}
-                  className={`group relative w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold text-xs shadow-xs transition-all cursor-pointer ${
-                    isSelected ? 'ring-2 ring-teal-500 scale-105' : 'hover:scale-105'
-                  }`}
+                  className={`group relative w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold text-xs shadow-xs transition-all cursor-pointer ${isSelected ? 'ring-2 ring-teal-500 scale-105' : 'hover:scale-105'
+                    }`}
                   style={{ backgroundColor: emp.avatarColor }}
                   aria-label={emp.name}
                 >
@@ -94,13 +93,11 @@ export const EmployeeSidebar: React.FC = () => {
 
       {/* 2. Full Sidebar Container (When Expanded or on Mobile) */}
       <aside
-        className={`fixed lg:static top-16 left-3 sm:left-4 bottom-3 sm:bottom-4 w-[calc(100vw-1.5rem)] sm:w-76 z-30 flex flex-col bg-white/85 backdrop-blur-xl border border-white/70 rounded-2xl shadow-2xl transition-all duration-300 pointer-events-auto overflow-hidden ${
-          isRosterCollapsed ? 'lg:hidden' : ''
-        } ${
-          isMobileDrawerOpen
+        className={`fixed lg:static top-16 left-3 sm:left-4 bottom-3 sm:bottom-4 w-[calc(100vw-1.5rem)] sm:w-76 z-30 flex flex-col bg-white/85 backdrop-blur-xl border border-white/70 rounded-2xl shadow-2xl transition-all duration-300 pointer-events-auto overflow-hidden ${isRosterCollapsed ? 'lg:hidden' : ''
+          } ${isMobileDrawerOpen
             ? 'translate-x-0 opacity-100'
             : '-translate-x-[calc(100%+2rem)] opacity-0 lg:translate-x-0 lg:opacity-100'
-        }`}
+          }`}
       >
         {/* Header with Title and Collapse Button */}
         <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between bg-white/60">
@@ -163,11 +160,10 @@ export const EmployeeSidebar: React.FC = () => {
                   selectEmployee(emp.id);
                   if (window.innerWidth < 1024) setIsMobileDrawerOpen(false);
                 }}
-                className={`w-full text-left p-2.5 rounded-xl transition flex items-center gap-2.5 border cursor-pointer ${
-                  isSelected
-                    ? 'bg-teal-50/90 border-teal-200 shadow-xs'
-                    : 'bg-transparent border-transparent hover:bg-slate-50/80'
-                }`}
+                className={`w-full text-left p-2.5 rounded-xl transition flex items-center gap-2.5 border cursor-pointer ${isSelected
+                  ? 'bg-teal-50/90 border-teal-200 shadow-xs'
+                  : 'bg-transparent border-transparent hover:bg-slate-50/80'
+                  }`}
               >
                 {/* Avatar with status indicator */}
                 <div className="relative shrink-0">

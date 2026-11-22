@@ -123,7 +123,7 @@ export const geminiToolDeclarations = [
       properties: {
         targetEmployeeId: {
           type: 'STRING',
-          description: 'The ID of the colleague (e.g. emp-1: Marcus Vance, emp-2: Elena Rostova, emp-3: Liam Chen, emp-4: Chloe Bennett, emp-5: Alexander Wright, emp-6: Sarah Jenkins, emp-7: David O\'Connor, emp-8: Victoria Sterling).',
+          description: 'The ID of the colleague (e.g. emp-1: Alex Morgan, emp-2: Olivia Chen, emp-3: Ethan Brooks, emp-4: Sophia Parker, emp-5: James Wilson, emp-6: Isabella Reed, emp-7: Noah Davis, emp-8: Emma Taylor).',
         },
         subtaskTitle: {
           type: 'STRING',

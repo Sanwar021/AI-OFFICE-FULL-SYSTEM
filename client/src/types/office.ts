@@ -42,6 +42,9 @@ export interface Employee {
   avatarColor: string;
   hairColor: string;
   suitColor: string;
+  avatarUrl?: string;
+  actionSnippet?: string;
+  startedAt?: string;
   status: EmployeeStatus;
   animationState: AnimationState;
   currentTaskTitle?: string;

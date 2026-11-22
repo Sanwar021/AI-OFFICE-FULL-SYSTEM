@@ -22,30 +22,30 @@ export interface ExecutionPlan {
 }
 
 const employeeDirectory: Record<string, { name: string; role: string }> = {
-  'emp-1': { name: 'Marcus Vance', role: 'GTM Engineer' },
-  'emp-2': { name: 'Elena Rostova', role: 'SEO/AEO Specialist' },
-  'emp-3': { name: 'Liam Chen', role: 'Web Development Engineer' },
-  'emp-4': { name: 'Chloe Bennett', role: 'Social Media Manager' },
-  'emp-5': { name: 'Alexander Wright', role: 'Advertisement Manager' },
-  'emp-6': { name: 'Sarah Jenkins', role: 'Sales Executive' },
-  'emp-7': { name: 'David O\'Connor', role: 'Customer Satisfaction Specialist' },
+  'emp-1': { name: 'Alex Morgan', role: 'GTM Engineer' },
+  'emp-2': { name: 'Olivia Chen', role: 'SEO/AEO Specialist' },
+  'emp-3': { name: 'Ethan Brooks', role: 'Web Development Engineer' },
+  'emp-4': { name: 'Sophia Parker', role: 'Social Media Manager' },
+  'emp-5': { name: 'James Wilson', role: 'Advertisement Manager' },
+  'emp-6': { name: 'Isabella Reed', role: 'Sales Executive' },
+  'emp-7': { name: 'Noah Davis', role: 'Customer Satisfaction Specialist' },
 };
 
 export async function generateObjectivePlan(objective: string): Promise<ExecutionPlan> {
   const ai = getGeminiClient();
   const model = getModel();
 
-  const prompt = `You are Victoria Sterling, Chief of Staff of the AI Office.
+  const prompt = `You are Emma Taylor, Chief of Staff of the AI Office.
 Your role is to analyze executive business objectives, break them down into structured subtasks, assign the most suitable specialist employees, identify dependencies, and produce an optimal execution plan.
 
 The 7 Specialist AI Employees in your team are:
-- emp-1: Marcus Vance (GTM Engineer) - Strategy, positioning, product launches, ICP targeting
-- emp-2: Elena Rostova (SEO/AEO Specialist) - Keyword research, search intent, article outlines & content
-- emp-3: Liam Chen (Web Development Engineer) - Architecture, technical analysis, code generation, bugs
-- emp-4: Chloe Bennett (Social Media Manager) - Social campaigns, viral hooks, 30-day content calendar
-- emp-5: Alexander Wright (Advertisement Manager) - Paid ad copy, ROAS, campaign structure, ad variants
-- emp-6: Sarah Jenkins (Sales Executive) - Prospect research, lead qualification, cold email sequences
-- emp-7: David O'Connor (Customer Satisfaction Specialist) - Support responses, churn analysis, customer FAQs
+- emp-1: Alex Morgan (GTM Engineer) - Strategy, positioning, product launches, ICP targeting
+- emp-2: Olivia Chen (SEO/AEO Specialist) - Keyword research, search intent, article outlines & content
+- emp-3: Ethan Brooks (Web Development Engineer) - Architecture, technical analysis, code generation, bugs
+- emp-4: Sophia Parker (Social Media Manager) - Social campaigns, viral hooks, 30-day content calendar
+- emp-5: James Wilson (Advertisement Manager) - Paid ad copy, ROAS, campaign structure, ad variants
+- emp-6: Isabella Reed (Sales Executive) - Prospect research, lead qualification, cold email sequences
+- emp-7: Noah Davis (Customer Satisfaction Specialist) - Support responses, churn analysis, customer FAQs
 
 User Objective:
 "${objective}"

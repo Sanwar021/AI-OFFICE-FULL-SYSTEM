@@ -16,21 +16,21 @@ export const CameraRig: React.FC<CameraRigProps> = ({ preset, selectedEmployee }
   const isTourActive = useOfficeStore((state) => state.isTourActive);
   const tourAngle = useRef(0);
 
-  // Target camera position and look-at point
-  const targetCamPos = useRef(new THREE.Vector3(-2.8, 2.6, 6.2));
-  const targetLookAt = useRef(new THREE.Vector3(0.3, 0.9, -0.6));
+  // Target camera position and look-at point - Elevated perspective matching Figma design
+  const targetCamPos = useRef(new THREE.Vector3(-2.4, 4.8, 8.2));
+  const targetLookAt = useRef(new THREE.Vector3(0.0, 0.5, 0.8));
 
   useEffect(() => {
     if (preset === 'overview') {
-      // Perspective matching the reference photograph
-      targetCamPos.current.set(-2.8, 2.6, 6.2);
-      targetLookAt.current.set(0.3, 0.9, -0.6);
+      // Elevated overview perspective showing full office and all 8 specialists
+      targetCamPos.current.set(-2.4, 4.8, 8.2);
+      targetLookAt.current.set(0.0, 0.5, 0.8);
     } else if (preset === 'team') {
-      targetCamPos.current.set(-0.6, 2.2, 4.4);
-      targetLookAt.current.set(0.1, 0.8, -0.1);
+      targetCamPos.current.set(-0.8, 3.2, 5.8);
+      targetLookAt.current.set(0.0, 0.7, 0.5);
     } else if (preset === 'follow' && selectedEmployee) {
       const [ex, ey, ez] = selectedEmployee.position;
-      targetCamPos.current.set(ex - 1.4, ey + 1.3, ez + 1.5);
+      targetCamPos.current.set(ex - 1.4, ey + 1.5, ez + 1.8);
       targetLookAt.current.set(ex, ey + 0.8, ez);
     }
   }, [preset, selectedEmployee]);

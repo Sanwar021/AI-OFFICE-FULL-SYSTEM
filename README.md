@@ -17,7 +17,7 @@
 **AI OFFICE** is a production-grade, interactive 3D virtual workspace where eight autonomous AI employees operate as a real corporate business team. Users can assign targeted micro-tasks to individual specialists or provide broad strategic business objectives.
 
 When an objective is assigned:
-1. **Victoria Sterling (Chief of Staff)** analyzes the requirements, formulates a multi-step execution plan, and divides work into a dependency graph (DAG).
+1. **Emma Taylor (Chief of Staff)** analyzes the requirements, formulates a multi-step execution plan, and divides work into a dependency graph (DAG).
 2. The AI specialists receive their assigned subtasks and physically work at their workstations in the 3D office.
 3. Specialists stream code, draft copy, analyze market data, and generate deliverables directly onto their **live 3D desktop monitors**.
 4. When assistance or review is required, employees walk between desks to hand over documents.
@@ -35,10 +35,10 @@ The 3D office environment is procedurally modeled with Three.js geometry, physic
     |  MASSIVE FLOOR-TO-CEILING GLASS CURTAIN WALL (Windows)      | [Potted Fiddle-Leaf Fig]
     +-------------------------------------------------------------+
     |                                                             |
-    |      [Desk Pod 2: Alexander, Sarah, David, Victoria]        |
+    |      [Desk Pod 2: James, Isabella, Noah, Emma]              |
     |                  === Linear LED Light ===                   |
     |                                                             |
-    |      [Desk Pod 1: Marcus, Elena, Liam, Chloe]               |
+    |      [Desk Pod 1: Alex, Olivia, Ethan, Sophia]              |
     |                  === Linear LED Light ===                   |
     |                                                             |
     +-------------------------------------------------------------+
@@ -47,9 +47,9 @@ The 3D office environment is procedurally modeled with Three.js geometry, physic
 ```
 
 ### Architectural Details:
-- **Floor-to-Ceiling Glass Curtain Wall**: Runs along the right wall with white structural columns, horizontal transom mullions, glass physical refraction (`ior: 1.5`), and daylight sun glare.
+- **Floor-to-Ceiling Glass Curtain Wall**: Runs along the perimeter with structural columns, horizontal transom mullions, glass physical refraction (`ior: 1.5`), and daylight sun glare.
 - **Exterior Skyline**: Crisp daylight cityscape with adjacent modern glass architecture.
-- **Dark Charcoal Cabinetry Feature Wall**: Situated on the left perimeter featuring recessed warm-LED display shelving, categorized document binders, books, ceramic vases, and a **65" Wall Task Board**.
+- **Dark Charcoal Cabinetry Feature Wall**: Situated on the perimeter featuring recessed warm-LED display shelving, categorized document binders, books, ceramic vases, and a **65" Wall Task Board**.
 - **Modern Desk Pods**: Pure white beveled tabletops with inverted silver chrome A-frame legs, modesty cable trays, black executive leather desk blotters, silver keyboards, and optical mice.
 - **Ergonomic Mesh Task Chairs**: Black contoured breathable mesh backrests with chrome lumbar bars, pneumatic gas-lift cylinders, and 5-star polished chrome spider bases with dual casters.
 - **Suspended Linear Pendant Lights**: Minimalist white linear LED fixtures suspended along the desk rows by chrome aircraft cables.
@@ -62,14 +62,14 @@ The 3D office environment is procedurally modeled with Three.js geometry, physic
 
 | Avatar | Specialist Name | Role | Core Capabilities |
 |:---:|:---|:---|:---|
-| <span style="color:#10b981">●</span> **MV** | **Marcus Vance** | GTM Engineer | Designs Go-To-Market strategies, launch roadmaps, ICP segmentation, and weekly launch scorecards. |
-| <span style="color:#2563eb">●</span> **ER** | **Elena Rostova** | SEO/AEO Specialist | High-intent keyword clustering, search intent mapping, and Answer Engine Optimization for Perplexity & Gemini. |
-| <span style="color:#6366f1">●</span> **LC** | **Liam Chen** | Web Development Engineer | Fullstack software architecture, TypeScript, React, Node.js code generation, and dependency audits. |
-| <span style="color:#f43f5e">●</span> **CB** | **Chloe Bennett** | Social Media Manager | Multi-channel social strategies (X/Twitter, LinkedIn), viral hooks, editorial calendars, and community playbooks. |
-| <span style="color:#f59e0b">●</span> **AW** | **Alexander Wright** | Advertisement Manager | Performance paid acquisition across Google & Meta Ads, ROAS optimization, and ad copy variants. |
-| <span style="color:#0d9488">●</span> **SJ** | **Sarah Jenkins** | Enterprise Sales Executive | Account prospecting, enterprise account intelligence, cold outreach sequences, and objection-handling scripts. |
-| <span style="color:#14b8a6">●</span> **DO** | **David O'Connor** | Customer Satisfaction Specialist | Ticket sentiment analysis, empathy-first response drafts, recurring complaint diagnosis, and churn playbooks. |
-| <span style="color:#1e293b">●</span> **VS** | **Victoria Sterling** | Chief of Staff | Central team orchestrator. Deconstructs objectives into subtasks, delegates to specialists, and compiles morning briefs. |
+| <span style="color:#10b981">●</span> **AM** | **Alex Morgan** | GTM Engineer | Designs Go-To-Market strategies, launch roadmaps, ICP segmentation, and weekly launch scorecards. |
+| <span style="color:#2563eb">●</span> **OC** | **Olivia Chen** | SEO/AEO Specialist | High-intent keyword clustering, search intent mapping, and Answer Engine Optimization for Perplexity & Gemini. |
+| <span style="color:#6366f1">●</span> **EB** | **Ethan Brooks** | Web Development Engineer | Fullstack software architecture, TypeScript, React, Node.js code generation, and dependency audits. |
+| <span style="color:#f43f5e">●</span> **SP** | **Sophia Parker** | Social Media Manager | Multi-channel social strategies (X/Twitter, LinkedIn), viral hooks, editorial calendars, and community playbooks. |
+| <span style="color:#f59e0b">●</span> **JW** | **James Wilson** | Advertisement Manager | Performance paid acquisition across Google & Meta Ads, ROAS optimization, and ad copy variants. |
+| <span style="color:#0d9488">●</span> **IR** | **Isabella Reed** | Enterprise Sales Executive | Account prospecting, enterprise account intelligence, cold outreach sequences, and objection-handling scripts. |
+| <span style="color:#14b8a6">●</span> **ND** | **Noah Davis** | Customer Satisfaction Specialist | Ticket sentiment analysis, empathy-first response drafts, recurring complaint diagnosis, and churn playbooks. |
+| <span style="color:#8b5cf6">●</span> **ET** | **Emma Taylor** | Chief of Staff | Central team orchestrator. Deconstructs objectives into subtasks, delegates to specialists, and compiles morning briefs. |
 
 ---
 
