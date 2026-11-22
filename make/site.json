@@ -1,0 +1,10 @@
+{
+  "description": "Manage a team of AI employees from a virtual office: assign business tasks, track progress, review deliverables, and approve actions.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useOfficeStore } from '../../src/store/useOfficeStore';
+import { useOfficeStore } from '../store/useOfficeStore';
 import { Sun, Moon, Video, Users, User, Plus, Settings, Menu, Sparkles, AlertTriangle, Clock } from 'lucide-react';
 
 interface NavbarProps {
@@ -35,86 +35,90 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
   }, []);
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 bg-white/75 backdrop-blur-md border-b border-white/60 shadow-xs pointer-events-auto">
-      {/* Left: Brand & Team */}
-      <div className="flex items-center gap-2 sm:gap-3">
+    <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-2.5 sm:px-4 md:px-6 py-2 sm:py-2.5 bg-white/80 backdrop-blur-md border-b border-white/60 shadow-xs pointer-events-auto select-none">
+      {/* Left: Brand & Mobile Drawer Toggle */}
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         <button
           onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-          className="lg:hidden p-2 text-slate-700 hover:bg-slate-100/80 rounded-xl transition"
+          className="lg:hidden w-11 h-11 flex items-center justify-center text-slate-700 hover:bg-slate-100/90 active:bg-slate-200 rounded-xl transition cursor-pointer"
           aria-label="Toggle employee roster"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          <div className="w-8 sm:w-9 h-8 sm:h-9 rounded-xl bg-gradient-to-tr from-teal-500 to-cyan-500 flex items-center justify-center text-white shadow-xs font-bold text-base sm:text-lg">
+        <div className="flex items-center gap-2">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-teal-500 to-cyan-500 flex items-center justify-center text-white shadow-xs font-bold text-lg sm:text-xl shrink-0">
             🏢
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <h1 className="font-extrabold text-slate-900 tracking-tight text-sm sm:text-base">
+              <h1 className="font-extrabold text-slate-900 tracking-tight text-xs sm:text-sm md:text-base truncate">
                 AI OFFICE
               </h1>
-              <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-semibold rounded-full bg-teal-50 text-teal-700 border border-teal-200 flex items-center gap-1">
+              <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-semibold rounded-full bg-teal-50 text-teal-700 border border-teal-200 flex items-center gap-1 shrink-0">
                 <Sparkles className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-teal-600 animate-pulse" />
                 Gemini
               </span>
             </div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500 hidden sm:block">
+            <p className="text-[10px] sm:text-[11px] text-slate-500 hidden md:block truncate">
               8 Autonomous Specialists Coordinated by Chief of Staff
             </p>
           </div>
         </div>
       </div>
 
-      {/* Center: Camera Presets */}
-      <div className="hidden md:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/60 shadow-inner">
+      {/* Center: Camera Presets (Desktop & Laptop >= 1024px) */}
+      <div className="hidden lg:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/60 shadow-inner">
         <button
           onClick={() => setCameraPreset('overview')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
             cameraPreset === 'overview'
               ? 'bg-white text-slate-900 shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
+          aria-label="Overview camera"
         >
           <Video className="w-3.5 h-3.5 text-teal-600" />
           Overview
         </button>
         <button
           onClick={() => setCameraPreset('team')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
             cameraPreset === 'team'
               ? 'bg-white text-slate-900 shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
+          aria-label="Team View camera"
         >
           <Users className="w-3.5 h-3.5 text-teal-600" />
           Team View
         </button>
         <button
           onClick={() => setCameraPreset('follow')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
             cameraPreset === 'follow'
               ? 'bg-white text-slate-900 shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
+          aria-label="Follow Desk camera"
         >
           <User className="w-3.5 h-3.5 text-teal-600" />
           Follow Desk
         </button>
       </div>
 
-      {/* Right: Controls & Modals */}
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      {/* Right: Controls & Actions */}
+      <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
         {/* Human Approvals Gateway */}
         <button
           onClick={onOpenApprovals}
-          className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition relative ${
+          className={`min-w-[44px] min-h-[44px] px-2.5 py-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer relative ${
             pendingApprovalsCount > 0
               ? 'bg-purple-50 text-purple-800 border-purple-300 animate-pulse'
               : 'text-slate-700 hover:bg-slate-100/80 border-slate-200/60'
           }`}
           title="Human Approvals Gateway"
+          aria-label="Approvals"
         >
           <AlertTriangle className="w-4 h-4 text-purple-600" />
           <span className="hidden xl:inline">Approvals</span>
@@ -128,8 +132,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         {/* Scheduled Routines */}
         <button
           onClick={onOpenRoutines}
-          className="p-2 rounded-xl text-slate-700 hover:bg-slate-100/80 border border-slate-200/60 transition flex items-center gap-1.5 text-xs font-semibold"
+          className="min-w-[44px] min-h-[44px] px-2.5 py-2 rounded-xl text-slate-700 hover:bg-slate-100/80 border border-slate-200/60 transition flex items-center justify-center gap-1.5 text-xs font-semibold cursor-pointer"
           title="Scheduled Routines & Morning Brief"
+          aria-label="Routines"
         >
           <Clock className="w-4 h-4 text-amber-500" />
           <span className="hidden xl:inline">Routines</span>
@@ -138,8 +143,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         {/* Day / Evening Toggle */}
         <button
           onClick={toggleTimeOfDay}
-          className="p-2 rounded-xl text-slate-700 hover:bg-slate-100/80 border border-slate-200/60 transition flex items-center gap-1 text-xs font-medium"
+          className="min-w-[44px] min-h-[44px] p-2 rounded-xl text-slate-700 hover:bg-slate-100/80 border border-slate-200/60 transition flex items-center justify-center text-xs font-medium cursor-pointer"
           title={timeOfDay === 'day' ? 'Switch to Evening' : 'Switch to Day'}
+          aria-label="Toggle Day or Evening"
         >
           {timeOfDay === 'day' ? (
             <Sun className="w-4 h-4 text-amber-500" />
@@ -151,7 +157,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         {/* Settings */}
         <button
           onClick={() => setIsSettingsModalOpen(true)}
-          className="p-2 rounded-xl text-slate-700 hover:bg-slate-100/80 border border-slate-200/60 transition"
+          className="min-w-[44px] min-h-[44px] p-2 rounded-xl text-slate-700 hover:bg-slate-100/80 border border-slate-200/60 transition flex items-center justify-center cursor-pointer"
           title="Office Settings & Gemini Configuration"
           aria-label="Settings"
         >
@@ -161,10 +167,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         {/* Assign Task Button */}
         <button
           onClick={() => setIsNewTaskModalOpen(true)}
-          className="px-3 sm:px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition active:scale-95"
+          className="min-h-[44px] px-3.5 sm:px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
+          aria-label="Assign New Task"
         >
-          <Plus className="w-4 h-4" />
-          <span className="hidden xs:inline sm:inline">Assign Task</span>
+          <Plus className="w-4 h-4 shrink-0" />
+          <span className="hidden sm:inline">Assign Task</span>
         </button>
       </div>
     </header>

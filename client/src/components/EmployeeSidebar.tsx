@@ -32,29 +32,30 @@ export const EmployeeSidebar: React.FC = () => {
       {isMobileDrawerOpen && (
         <div
           onClick={() => setIsMobileDrawerOpen(false)}
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-30 lg:hidden"
+          className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs z-30 lg:hidden pointer-events-auto"
         />
       )}
 
       {/* Sidebar container */}
       <aside
-        className={`fixed lg:static top-16 left-4 bottom-4 w-72 z-30 flex flex-col bg-white/80 backdrop-blur-md border border-white/60 rounded-2xl shadow-lg transition-transform duration-300 pointer-events-auto ${
+        className={`fixed lg:static top-16 left-3 sm:left-4 bottom-3 sm:bottom-4 w-[calc(100vw-1.5rem)] sm:w-72 z-30 flex flex-col bg-white/85 backdrop-blur-md border border-white/70 rounded-2xl shadow-xl transition-all duration-300 pointer-events-auto overflow-hidden ${
           isMobileDrawerOpen
-            ? 'translate-x-0'
-            : '-translate-x-[calc(100%+2rem)] lg:translate-x-0'
+            ? 'translate-x-0 opacity-100'
+            : '-translate-x-[calc(100%+2rem)] opacity-0 lg:translate-x-0 lg:opacity-100'
         }`}
       >
         {/* Header */}
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between bg-white/50">
           <div className="flex items-center gap-2">
             <UserCheck className="w-4 h-4 text-teal-600" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">
               AI Team Roster (8)
             </h2>
           </div>
           <button
             onClick={() => setIsMobileDrawerOpen(false)}
-            className="lg:hidden p-1 text-slate-400 hover:text-slate-600"
+            className="lg:hidden p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition"
+            aria-label="Close roster"
           >
             <X className="w-4 h-4" />
           </button>
@@ -71,16 +72,16 @@ export const EmployeeSidebar: React.FC = () => {
                   selectEmployee(emp.id);
                   if (window.innerWidth < 1024) setIsMobileDrawerOpen(false);
                 }}
-                className={`w-full text-left p-2.5 rounded-xl transition flex items-center gap-3 border ${
+                className={`w-full text-left p-2.5 sm:p-2.5 rounded-xl transition flex items-center gap-2.5 sm:gap-3 border cursor-pointer ${
                   isSelected
-                    ? 'bg-teal-50/80 border-teal-200 shadow-xs'
+                    ? 'bg-teal-50/90 border-teal-200 shadow-xs'
                     : 'bg-transparent border-transparent hover:bg-slate-50/80'
                 }`}
               >
-                {/* Avatar with indicator */}
-                <div className="relative">
+                {/* Avatar with status indicator */}
+                <div className="relative shrink-0">
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-xs shadow-xs"
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-extrabold text-xs shadow-xs"
                     style={{ backgroundColor: emp.avatarColor }}
                   >
                     {emp.name
@@ -99,8 +100,8 @@ export const EmployeeSidebar: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <h3
-                      className={`text-xs font-semibold truncate ${
-                        isSelected ? 'text-teal-900 font-bold' : 'text-slate-800'
+                      className={`text-xs font-bold truncate ${
+                        isSelected ? 'text-teal-900' : 'text-slate-800'
                       }`}
                     >
                       {emp.name}
@@ -116,10 +117,10 @@ export const EmployeeSidebar: React.FC = () => {
         </div>
 
         {/* Footer info */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl">
+        <div className="p-3 border-t border-slate-100 bg-slate-50/60">
           <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
             <span>Orchestration</span>
-            <span className="font-semibold text-teal-700">Chief of Staff</span>
+            <span className="font-bold text-teal-700">Victoria Sterling (Chief)</span>
           </div>
         </div>
       </aside>

@@ -1,6 +1,7 @@
 {
   "name": "ai-office-root",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "install:all": "npm install && npm install --prefix client && npm install --prefix server",

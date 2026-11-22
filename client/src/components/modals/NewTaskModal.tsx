@@ -67,29 +67,30 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm pointer-events-auto">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm pointer-events-auto">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-teal-600 flex items-center justify-center text-white">
+        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center text-white shrink-0">
               <Play className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Assign New Task</h3>
-              <p className="text-xs text-slate-500">Dispatch work to the AI Office team</p>
+              <h3 className="text-xs sm:text-sm font-bold text-slate-900">Assign New Task</h3>
+              <p className="text-[11px] sm:text-xs text-slate-500">Dispatch work to the AI Office team</p>
             </div>
           </div>
           <button
             onClick={() => setIsNewTaskModalOpen(false)}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+            className="w-11 h-11 flex items-center justify-center text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer"
+            aria-label="Close dialog"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        {/* Form Body (Scrollable) */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
           {error && (
             <div className="p-3 text-xs bg-rose-50 text-rose-700 border border-rose-200 rounded-xl">
               {error}
@@ -101,7 +102,7 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
             <button
               type="button"
               onClick={() => setMode('manual')}
-              className={`py-2 text-xs font-semibold rounded-lg transition ${
+              className={`min-h-[44px] py-2 px-3 text-xs font-semibold rounded-lg transition cursor-pointer flex items-center justify-center ${
                 mode === 'manual' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
               }`}
             >
@@ -110,7 +111,7 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
             <button
               type="button"
               onClick={() => setMode('chief_plan')}
-              className={`py-2 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5 ${
+              className={`min-h-[44px] py-2 px-3 text-xs font-semibold rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5 ${
                 mode === 'chief_plan'
                   ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-xs'
                   : 'text-slate-600'
@@ -136,7 +137,7 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
                   ? 'e.g., Q1 Product Launch & Outbound Campaign'
                   : 'e.g., Draft SEO Article on AI Office Workspaces'
               }
-              className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-teal-500 bg-slate-50/50"
+              className="w-full min-h-[42px] px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-teal-500 bg-slate-50/50"
             />
           </div>
 
@@ -149,7 +150,7 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
               <select
                 value={assignedEmployeeId}
                 onChange={(e) => setAssignedEmployeeId(e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-teal-500 bg-slate-50/50"
+                className="w-full min-h-[42px] px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-teal-500 bg-slate-50/50 cursor-pointer"
               >
                 {employees.map((emp) => (
                   <option key={emp.id} value={emp.id}>
@@ -180,7 +181,7 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
           </div>
 
           {/* Priority */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-semibold text-slate-700">Priority Level:</span>
             <div className="flex items-center gap-1.5">
               {(['low', 'medium', 'high', 'urgent'] as const).map((p) => (
@@ -188,7 +189,7 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
                   type="button"
                   key={p}
                   onClick={() => setPriority(p)}
-                  className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg capitalize transition ${
+                  className={`min-h-[36px] px-3 py-1.5 text-xs font-semibold rounded-lg capitalize transition cursor-pointer ${
                     priority === p
                       ? p === 'urgent'
                         ? 'bg-rose-500 text-white'
@@ -205,18 +206,18 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
           </div>
 
           {/* Actions */}
-          <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+          <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
             <button
               type="button"
               onClick={() => setIsNewTaskModalOpen(false)}
-              className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition"
+              className="min-h-[44px] px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center gap-1.5 transition"
+              className="min-h-[44px] px-5 py-2.5 bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95"
             >
               {isSubmitting ? (
                 <span>Processing...</span>

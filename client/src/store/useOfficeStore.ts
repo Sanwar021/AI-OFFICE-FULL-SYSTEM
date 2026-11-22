@@ -35,6 +35,9 @@ interface OfficeState {
   setIsSettingsModalOpen: (open: boolean) => void;
   isMobileDrawerOpen: boolean;
   setIsMobileDrawerOpen: (open: boolean) => void;
+  isInspectorOpen: boolean;
+  setIsInspectorOpen: (open: boolean) => void;
+  toggleInspector: () => void;
 }
 
 const initialEmployees: Employee[] = [
@@ -166,6 +169,7 @@ export const useOfficeStore = create<OfficeState>((set) => ({
     set((state) => ({
       selectedEmployeeId: id,
       cameraPreset: id ? 'follow' : state.cameraPreset,
+      isInspectorOpen: Boolean(id),
     })),
 
   employees: initialEmployees,
@@ -205,4 +209,7 @@ export const useOfficeStore = create<OfficeState>((set) => ({
   setIsSettingsModalOpen: (open) => set({ isSettingsModalOpen: open }),
   isMobileDrawerOpen: false,
   setIsMobileDrawerOpen: (open) => set({ isMobileDrawerOpen: open }),
+  isInspectorOpen: false,
+  setIsInspectorOpen: (open) => set({ isInspectorOpen: open }),
+  toggleInspector: () => set((state) => ({ isInspectorOpen: !state.isInspectorOpen })),
 }));

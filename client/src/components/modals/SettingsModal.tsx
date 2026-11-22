@@ -92,26 +92,27 @@ export const SettingsModal: React.FC = () => {
   if (!isSettingsModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm pointer-events-auto">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden flex flex-col max-h-[85vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm pointer-events-auto">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden flex flex-col max-h-[88vh]">
         {/* Header */}
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold text-slate-900">Office Settings & Configuration</h3>
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900">Office Settings & Configuration</h3>
           </div>
           <button
             onClick={() => setIsSettingsModalOpen(false)}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+            className="w-11 h-11 flex items-center justify-center text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer"
+            aria-label="Close dialog"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center border-b border-slate-100 px-4 bg-white">
+        <div className="flex items-center border-b border-slate-100 px-3 sm:px-4 bg-white shrink-0 overflow-x-auto">
           <button
             onClick={() => setActiveTab('gemini')}
-            className={`px-4 py-2.5 text-xs font-semibold border-b-2 flex items-center gap-1.5 transition ${
+            className={`min-h-[44px] px-3 sm:px-4 py-2.5 text-xs font-semibold border-b-2 flex items-center gap-1.5 transition cursor-pointer shrink-0 ${
               activeTab === 'gemini'
                 ? 'border-teal-600 text-teal-700'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -122,7 +123,7 @@ export const SettingsModal: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('employees')}
-            className={`px-4 py-2.5 text-xs font-semibold border-b-2 flex items-center gap-1.5 transition ${
+            className={`min-h-[44px] px-3 sm:px-4 py-2.5 text-xs font-semibold border-b-2 flex items-center gap-1.5 transition cursor-pointer shrink-0 ${
               activeTab === 'employees'
                 ? 'border-teal-600 text-teal-700'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -133,7 +134,7 @@ export const SettingsModal: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('workspace')}
-            className={`px-4 py-2.5 text-xs font-semibold border-b-2 flex items-center gap-1.5 transition ${
+            className={`min-h-[44px] px-3 sm:px-4 py-2.5 text-xs font-semibold border-b-2 flex items-center gap-1.5 transition cursor-pointer shrink-0 ${
               activeTab === 'workspace'
                 ? 'border-teal-600 text-teal-700'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -313,20 +314,20 @@ export const SettingsModal: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
-          <span className="text-xs text-emerald-600 font-semibold">
+        <div className="p-3.5 sm:p-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
+          <span className="text-xs text-emerald-600 font-semibold truncate">
             {saveSuccess && 'Settings saved successfully!'}
           </span>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsSettingsModalOpen(false)}
-              className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-xl transition"
+              className="min-h-[44px] px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-xl transition cursor-pointer"
             >
               Close
             </button>
             <button
               onClick={handleSaveSettings}
-              className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-semibold shadow-xs transition"
+              className="min-h-[44px] px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-semibold shadow-xs transition cursor-pointer active:scale-95"
             >
               Save Configuration
             </button>

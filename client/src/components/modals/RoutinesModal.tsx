@@ -91,31 +91,32 @@ export const RoutinesModal: React.FC<RoutinesModalProps> = ({ isOpen, onClose })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm pointer-events-auto">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden flex flex-col max-h-[85vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm pointer-events-auto">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden flex flex-col max-h-[88vh]">
         {/* Header */}
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-amber-50/50">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-amber-600 flex items-center justify-center text-white">
+        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between bg-amber-50/50 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-amber-600 flex items-center justify-center text-white shrink-0">
               <Clock className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Scheduled Routines & Morning Brief</h3>
-              <p className="text-xs text-slate-500">Autonomous business routines executed on schedule</p>
+              <h3 className="text-xs sm:text-sm font-bold text-slate-900">Scheduled Routines & Morning Brief</h3>
+              <p className="text-[11px] sm:text-xs text-slate-500">Autonomous business routines executed on schedule</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+            className="w-11 h-11 flex items-center justify-center text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer"
+            aria-label="Close dialog"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
           {/* Morning Brief Card */}
-          <div className="p-4 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-2xl flex items-center justify-between">
+          <div className="p-3.5 sm:p-4 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-2xl flex flex-wrap items-center justify-between gap-3">
             <div>
               <h4 className="text-xs font-bold text-teal-900 flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-teal-600" />
@@ -128,7 +129,7 @@ export const RoutinesModal: React.FC<RoutinesModalProps> = ({ isOpen, onClose })
             <button
               onClick={handleGenerateBrief}
               disabled={isGeneratingBrief}
-              className="px-3.5 py-2 bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center gap-1.5 transition shrink-0"
+              className="min-h-[44px] px-4 py-2.5 bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer active:scale-95"
             >
               {isGeneratingBrief ? 'Generating...' : 'Generate Now'}
             </button>

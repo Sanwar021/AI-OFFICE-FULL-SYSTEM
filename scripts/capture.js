@@ -4,8 +4,20 @@ import path from 'path';
 const ARTIFACT_DIR = 'C:/Users/Fame IT/.gemini/antigravity/brain/7bd6b650-c10f-473c-bece-2575acb17272';
 const CHROME_PATH = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 
+const viewports = [
+  { name: 'desktop_1920x1080', width: 1920, height: 1080 },
+  { name: 'desktop_1440x900', width: 1440, height: 900 },
+  { name: 'desktop_1280x800', width: 1280, height: 800 },
+  { name: 'tablet_landscape_1024x768', width: 1024, height: 768 },
+  { name: 'tablet_portrait_768x1024', width: 768, height: 1024 },
+  { name: 'mobile_large_430x932', width: 430, height: 932 },
+  { name: 'mobile_standard_390x844', width: 390, height: 844 },
+  { name: 'mobile_small_360x800', width: 360, height: 800 },
+  { name: 'mobile_mini_320x740', width: 320, height: 740 },
+];
+
 async function run() {
-  console.log('Launching Chrome with puppeteer-core...');
+  console.log('Launching Chrome with puppeteer-core for full responsive testing...');
   const browser = await puppeteer.launch({
     executablePath: CHROME_PATH,
     headless: true,
@@ -20,86 +32,42 @@ async function run() {
   });
 
   const page = await browser.newPage();
-  await page.setViewport({ width: 1920, height: 1080 });
 
   console.log('Navigating to http://localhost:5173...');
   await page.goto('http://localhost:5173', { waitUntil: 'domcontentloaded' });
   await new Promise((r) => setTimeout(r, 3000));
 
-  // 1. Overview Day
-  console.log('Capturing Overview Day (1920x1080)...');
-  await page.screenshot({
-    path: path.join(ARTIFACT_DIR, 'screenshot_overview_day.png'),
-  });
+  for (const vp of viewports) {
+    console.log(`Testing viewport: ${vp.name} (${vp.width}x${vp.height})...`);
+    await page.setViewport({ width: vp.width, height: vp.height });
+    await new Promise((r) => setTimeout(r, 1200));
 
-  // 2. Overview Evening
-  console.log('Toggling Evening Mode...');
+    // Verify no horizontal overflow
+    const hasOverflow = await page.evaluate(() => {
+      return document.documentElement.scrollWidth > window.innerWidth;
+    });
+
+    console.log(`Viewport ${vp.name} horizontal overflow: ${hasOverflow ? 'DETECTED' : 'NONE (PASS)'}`);
+
+    await page.screenshot({
+      path: path.join(ARTIFACT_DIR, `screenshot_${vp.name}.png`),
+    });
+  }
+
+  // Also test clicking Evening Mode in 1920x1080
+  await page.setViewport({ width: 1920, height: 1080 });
   await page.evaluate(() => {
     const buttons = Array.from(document.querySelectorAll('button'));
     const btn = buttons.find(b => b.title && (b.title.includes('Evening') || b.title.includes('Day')));
     if (btn) btn.click();
   });
   await new Promise((r) => setTimeout(r, 1200));
-  console.log('Capturing Overview Evening...');
   await page.screenshot({
     path: path.join(ARTIFACT_DIR, 'screenshot_overview_evening.png'),
   });
 
-  // Toggle back to Day
-  await page.evaluate(() => {
-    const buttons = Array.from(document.querySelectorAll('button'));
-    const btn = buttons.find(b => b.title && (b.title.includes('Evening') || b.title.includes('Day')));
-    if (btn) btn.click();
-  });
-  await new Promise((r) => setTimeout(r, 800));
-
-  // 3. Team View Preset
-  console.log('Switching to Team View...');
-  await page.evaluate(() => {
-    const buttons = Array.from(document.querySelectorAll('button'));
-    const teamBtn = buttons.find(b => b.textContent && b.textContent.includes('Team View'));
-    if (teamBtn) teamBtn.click();
-  });
-  await new Promise((r) => setTimeout(r, 1500));
-  console.log('Capturing Team View...');
-  await page.screenshot({
-    path: path.join(ARTIFACT_DIR, 'screenshot_team_view.png'),
-  });
-
-  // 4. Laptop / Landscape (1440x900)
-  console.log('Capturing Laptop 1440x900...');
-  await page.setViewport({ width: 1440, height: 900 });
-  await new Promise((r) => setTimeout(r, 800));
-  await page.screenshot({
-    path: path.join(ARTIFACT_DIR, 'screenshot_1440x900.png'),
-  });
-
-  // 5. Tablet (768x1024)
-  console.log('Capturing Tablet 768x1024...');
-  await page.setViewport({ width: 768, height: 1024 });
-  await new Promise((r) => setTimeout(r, 800));
-  await page.screenshot({
-    path: path.join(ARTIFACT_DIR, 'screenshot_tablet_768x1024.png'),
-  });
-
-  // 6. Mobile (390x844)
-  console.log('Capturing Mobile 390x844...');
-  await page.setViewport({ width: 390, height: 844 });
-  await new Promise((r) => setTimeout(r, 800));
-  await page.screenshot({
-    path: path.join(ARTIFACT_DIR, 'screenshot_mobile_390x844.png'),
-  });
-
-  // 7. Small Mobile (320x740)
-  console.log('Capturing Small Mobile 320x740...');
-  await page.setViewport({ width: 320, height: 740 });
-  await new Promise((r) => setTimeout(r, 800));
-  await page.screenshot({
-    path: path.join(ARTIFACT_DIR, 'screenshot_mobile_320x740.png'),
-  });
-
   await browser.close();
-  console.log('All responsive screenshots completed successfully!');
+  console.log('All responsive viewports verified and captured successfully!');
 }
 
 run().catch((err) => {

@@ -10,7 +10,7 @@ import { SettingsModal } from './components/modals/SettingsModal';
 import { RoutinesModal } from './components/modals/RoutinesModal';
 import { useOfficeStore } from './store/useOfficeStore';
 import { useSSE } from './hooks/useSSE';
-import { Video, Users, User, Sun, Moon, Plus, AlertTriangle, Clock } from 'lucide-react';
+import { Video, Users, User, Sun, Moon, Plus, AlertTriangle, Clock, Terminal } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Real-time server-sent events synchronization
@@ -21,6 +21,8 @@ export const App: React.FC = () => {
   const timeOfDay = useOfficeStore((state) => state.timeOfDay);
   const toggleTimeOfDay = useOfficeStore((state) => state.toggleTimeOfDay);
   const setIsNewTaskModalOpen = useOfficeStore((state) => state.setIsNewTaskModalOpen);
+  const toggleInspector = useOfficeStore((state) => state.toggleInspector);
+  const isInspectorOpen = useOfficeStore((state) => state.isInspectorOpen);
 
   const [activePlan, setActivePlan] = useState<any | null>(null);
   const [isApprovalsOpen, setIsApprovalsOpen] = useState(false);
@@ -48,58 +50,113 @@ export const App: React.FC = () => {
         <TaskInspector />
       </div>
 
-      {/* Mobile Bottom Quick Action Bar */}
-      <div className="md:hidden fixed bottom-3 left-3 right-3 z-20 flex items-center justify-between bg-white/85 backdrop-blur-md border border-white/60 p-2 rounded-2xl shadow-lg pointer-events-auto">
+      {/* Mobile / Tablet Bottom Quick Action Bar (< 1024px) */}
+      <nav
+        aria-label="Mobile Controls"
+        className="lg:hidden fixed bottom-3 left-2 right-2 sm:left-4 sm:right-4 z-20 flex items-center justify-between bg-white/90 backdrop-blur-md border border-white/70 px-2 py-1.5 sm:px-3 sm:py-2 rounded-2xl shadow-xl pointer-events-auto select-none"
+      >
+        {/* Camera Preset Controls */}
         <div className="flex items-center gap-1">
+          {/* Mobile Single Cycle Button (< 640px) */}
           <button
-            onClick={() => setCameraPreset('overview')}
-            className={`p-2 rounded-xl text-xs font-medium transition ${
-              cameraPreset === 'overview' ? 'bg-teal-50 text-teal-700' : 'text-slate-600'
-            }`}
-            title="Overview"
+            onClick={() => {
+              if (cameraPreset === 'overview') setCameraPreset('team');
+              else if (cameraPreset === 'team') setCameraPreset('follow');
+              else setCameraPreset('overview');
+            }}
+            className="sm:hidden min-h-[44px] px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-teal-50 text-teal-800 ring-1 ring-teal-300 flex items-center gap-1.5 transition cursor-pointer active:scale-95"
+            title={`Camera: ${cameraPreset} (tap to cycle)`}
+            aria-label="Cycle camera view"
           >
-            <Video className="w-4 h-4" />
+            {cameraPreset === 'overview' && <Video className="w-4 h-4 text-teal-600 shrink-0" />}
+            {cameraPreset === 'team' && <Users className="w-4 h-4 text-teal-600 shrink-0" />}
+            {cameraPreset === 'follow' && <User className="w-4 h-4 text-teal-600 shrink-0" />}
+            <span className="capitalize text-[11px] font-bold">{cameraPreset}</span>
           </button>
-          <button
-            onClick={() => setCameraPreset('team')}
-            className={`p-2 rounded-xl text-xs font-medium transition ${
-              cameraPreset === 'team' ? 'bg-teal-50 text-teal-700' : 'text-slate-600'
-            }`}
-            title="Team View"
-          >
-            <Users className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setCameraPreset('follow')}
-            className={`p-2 rounded-xl text-xs font-medium transition ${
-              cameraPreset === 'follow' ? 'bg-teal-50 text-teal-700' : 'text-slate-600'
-            }`}
-            title="Follow Desk"
-          >
-            <User className="w-4 h-4" />
-          </button>
+
+          {/* Tablet Presets (>= 640px) */}
+          <div className="hidden sm:flex items-center gap-1">
+            <button
+              onClick={() => setCameraPreset('overview')}
+              className={`min-w-[44px] min-h-[44px] p-2 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center justify-center ${
+                cameraPreset === 'overview'
+                  ? 'bg-teal-50 text-teal-700 ring-1 ring-teal-300'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+              title="Overview"
+              aria-label="Camera Overview"
+            >
+              <Video className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setCameraPreset('team')}
+              className={`min-w-[44px] min-h-[44px] p-2 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center justify-center ${
+                cameraPreset === 'team'
+                  ? 'bg-teal-50 text-teal-700 ring-1 ring-teal-300'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+              title="Team View"
+              aria-label="Camera Team View"
+            >
+              <Users className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setCameraPreset('follow')}
+              className={`min-w-[44px] min-h-[44px] p-2 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center justify-center ${
+                cameraPreset === 'follow'
+                  ? 'bg-teal-50 text-teal-700 ring-1 ring-teal-300'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+              title="Follow Desk"
+              aria-label="Camera Follow Desk"
+            >
+              <User className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        {/* Action Controls */}
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          {/* Inspector Drawer Toggle */}
+          <button
+            onClick={toggleInspector}
+            className={`min-w-[44px] min-h-[44px] p-2 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center justify-center ${
+              isInspectorOpen
+                ? 'bg-teal-600 text-white shadow-xs'
+                : 'text-slate-700 bg-slate-100 hover:bg-slate-200'
+            }`}
+            title="Toggle Live Monitor Inspector"
+            aria-label="Toggle Monitor Inspector"
+          >
+            <Terminal className="w-4 h-4" />
+          </button>
+
+          {/* Approvals */}
           <button
             onClick={() => setIsApprovalsOpen(true)}
-            className="p-2 rounded-xl text-purple-700 bg-purple-50 hover:bg-purple-100 transition"
+            className="min-w-[44px] min-h-[44px] p-2 rounded-xl text-purple-700 bg-purple-50 hover:bg-purple-100 transition cursor-pointer flex items-center justify-center"
             title="Approvals"
+            aria-label="Open Approvals"
           >
             <AlertTriangle className="w-4 h-4" />
           </button>
 
+          {/* Routines */}
           <button
             onClick={() => setIsRoutinesOpen(true)}
-            className="p-2 rounded-xl text-amber-700 bg-amber-50 hover:bg-amber-100 transition"
+            className="min-w-[44px] min-h-[44px] p-2 rounded-xl text-amber-700 bg-amber-50 hover:bg-amber-100 transition cursor-pointer flex items-center justify-center"
             title="Routines"
+            aria-label="Open Routines"
           >
             <Clock className="w-4 h-4" />
           </button>
 
+          {/* Day / Evening (Tablet only, as mobile has it in navbar) */}
           <button
             onClick={toggleTimeOfDay}
-            className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+            className="hidden sm:flex min-w-[44px] min-h-[44px] p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition cursor-pointer items-center justify-center"
+            title="Toggle Day/Evening Mode"
+            aria-label="Toggle Day/Evening"
           >
             {timeOfDay === 'day' ? (
               <Sun className="w-4 h-4 text-amber-500" />
@@ -108,15 +165,17 @@ export const App: React.FC = () => {
             )}
           </button>
 
+          {/* New Task */}
           <button
             onClick={() => setIsNewTaskModalOpen(true)}
-            className="px-3.5 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-xs"
+            className="min-h-[44px] px-3 sm:px-3.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1 shadow-sm active:scale-95 transition cursor-pointer"
+            aria-label="New Task"
           >
             <Plus className="w-4 h-4" />
-            <span>Task</span>
+            <span className="hidden sm:inline">Task</span>
           </button>
         </div>
-      </div>
+      </nav>
 
       {/* Modals */}
       <NewTaskModal onPlanGenerated={(plan) => setActivePlan(plan)} />

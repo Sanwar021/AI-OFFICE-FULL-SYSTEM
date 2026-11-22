@@ -161,6 +161,14 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
 
   return (
     <group ref={groupRef} onClick={onSelect}>
+      {/* Interactive Selection Ring on Floor */}
+      {isSelected && (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+          <ringGeometry args={[0.55, 0.64, 32]} />
+          <meshBasicMaterial color="#14b8a6" transparent opacity={0.75} side={THREE.DoubleSide} />
+        </mesh>
+      )}
+
       {/* 3D Floating Nameplate and Real-time Status Badge */}
       <Html position={[0, 1.82, 0]} center zIndexRange={[100, 0]}>
         <div
