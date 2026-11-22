@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Employee } from '../types/office';
+import { createScreenTexture } from './textures';
 
 interface CharacterAvatarProps {
   employee: Employee;
@@ -19,6 +20,8 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
   const headRef = useRef<THREE.Group>(null);
   const leftArmRef = useRef<THREE.Group>(null);
   const rightArmRef = useRef<THREE.Group>(null);
+  const leftHandRef = useRef<THREE.Group>(null);
+  const rightHandRef = useRef<THREE.Group>(null);
   const leftLegRef = useRef<THREE.Group>(null);
   const rightLegRef = useRef<THREE.Group>(null);
   const docRef = useRef<THREE.Group>(null);
@@ -28,18 +31,29 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
   const isThinking = employee.animationState === 'thinking' || employee.status === 'thinking';
   const isDelivering = employee.animationState === 'delivering';
 
-  // Base desk seating coordinates
+  // Base desk seating coordinates & correct architectural facing
   const deskX = employee.deskPosition.x;
   const deskZ = employee.deskPosition.z;
-  const facingRotY = employee.deskPosition.rotationY;
+  const isNorthDesk = employee.deskPosition.rotationY === 0;
+
+  // Seated employee faces their desk and monitor
+  const personFacingRotY = isNorthDesk ? Math.PI : 0;
+  // Desktop monitor faces the seated employee
+  const monitorFacingRotY = isNorthDesk ? 0 : Math.PI;
+
+  // Screen texture dynamically generated for this employee
+  const screenTexture = useMemo(
+    () => createScreenTexture(employee.name, employee.role, employee.status, employee.monitorContent),
+    [employee.name, employee.role, employee.status, employee.monitorContent]
+  );
 
   // Materials
   const suitMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
         color: employee.avatarColor,
-        roughness: 0.45,
-        metalness: 0.1,
+        roughness: 0.35,
+        metalness: 0.15,
       }),
     [employee.avatarColor]
   );
@@ -47,8 +61,9 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
   const skinMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: '#f6d5ba',
-        roughness: 0.7,
+        color: '#f8d7c4',
+        roughness: 0.65,
+        metalness: 0.05,
       }),
     []
   );
@@ -57,7 +72,8 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
     () =>
       new THREE.MeshStandardMaterial({
         color: employee.hairColor,
-        roughness: 0.8,
+        roughness: 0.7,
+        metalness: 0.1,
       }),
     [employee.hairColor]
   );
@@ -75,7 +91,27 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
     () =>
       new THREE.MeshStandardMaterial({
         color: '#ffffff',
-        roughness: 0.25,
+        roughness: 0.2,
+      }),
+    []
+  );
+
+  const shoeMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: '#090d16',
+        roughness: 0.3,
+        metalness: 0.2,
+      }),
+    []
+  );
+
+  const chromeMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: '#e2e8f0',
+        metalness: 0.9,
+        roughness: 0.1,
       }),
     []
   );
@@ -88,59 +124,67 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
     if (!groupRef.current) return;
 
     if (!isWalking) {
-      // Natural seated position in the office chair
-      const chairDist = facingRotY === 0 ? 0.68 : -0.68;
+      // Natural seated position in the office chair pulled up to desk
+      const chairDist = isNorthDesk ? 0.60 : -0.60;
       const targetZ = deskZ + chairDist;
       groupRef.current.position.set(deskX, 0.05, targetZ);
-      groupRef.current.rotation.y = facingRotY;
+      groupRef.current.rotation.y = personFacingRotY;
 
       // Subtle breathing torso bob
-      groupRef.current.position.y = 0.05 + Math.sin(t * 2 + seed) * 0.008;
+      groupRef.current.position.y = 0.05 + Math.sin(t * 2 + seed) * 0.005;
 
       // Animation: Typing
       if (isTyping) {
         if (leftArmRef.current) {
-          leftArmRef.current.rotation.x = -1.15 + Math.sin(t * 14 + seed) * 0.1;
-          leftArmRef.current.rotation.z = 0.2;
+          leftArmRef.current.rotation.x = -0.95 + Math.sin(t * 12 + seed) * 0.04;
+          leftArmRef.current.rotation.y = 0.2;
+          leftArmRef.current.rotation.z = 0.15;
         }
         if (rightArmRef.current) {
-          rightArmRef.current.rotation.x = -1.15 + Math.cos(t * 14 + seed) * 0.1;
-          rightArmRef.current.rotation.z = -0.2;
+          rightArmRef.current.rotation.x = -0.95 + Math.cos(t * 12 + seed) * 0.04;
+          rightArmRef.current.rotation.y = -0.2;
+          rightArmRef.current.rotation.z = -0.15;
+        }
+        if (leftHandRef.current) {
+          leftHandRef.current.rotation.x = Math.sin(t * 22 + seed) * 0.12;
+        }
+        if (rightHandRef.current) {
+          rightHandRef.current.rotation.x = Math.cos(t * 22 + seed) * 0.12;
         }
         if (headRef.current) {
-          headRef.current.rotation.x = 0.14 + Math.sin(t * 3) * 0.02;
+          headRef.current.rotation.x = 0.16 + Math.sin(t * 2) * 0.02;
+          headRef.current.rotation.y = Math.sin(t * 0.8 + seed) * 0.04;
         }
       }
       // Animation: Thinking
       else if (isThinking) {
         if (rightArmRef.current) {
-          // Hand to chin
-          rightArmRef.current.rotation.x = -1.8;
-          rightArmRef.current.rotation.y = -0.5;
-          rightArmRef.current.rotation.z = -0.4;
+          rightArmRef.current.rotation.x = -1.65;
+          rightArmRef.current.rotation.y = -0.4;
+          rightArmRef.current.rotation.z = -0.3;
         }
         if (leftArmRef.current) {
-          leftArmRef.current.rotation.x = -0.8;
-          leftArmRef.current.rotation.z = 0.3;
+          leftArmRef.current.rotation.x = -0.6;
+          leftArmRef.current.rotation.z = 0.25;
         }
         if (headRef.current) {
-          headRef.current.rotation.y = 0.2 + Math.sin(t * 1.5) * 0.08;
-          headRef.current.rotation.x = -0.15;
+          headRef.current.rotation.y = 0.25 + Math.sin(t * 1.5) * 0.06;
+          headRef.current.rotation.x = -0.12;
         }
       }
       // Animation: Idle
       else {
         if (leftArmRef.current) {
-          leftArmRef.current.rotation.x = -0.7 + Math.sin(t * 1.5 + seed) * 0.04;
-          leftArmRef.current.rotation.z = 0.22;
+          leftArmRef.current.rotation.x = -0.55 + Math.sin(t * 1.2 + seed) * 0.02;
+          leftArmRef.current.rotation.z = 0.2;
         }
         if (rightArmRef.current) {
-          rightArmRef.current.rotation.x = -0.7 + Math.cos(t * 1.5 + seed) * 0.04;
-          rightArmRef.current.rotation.z = -0.22;
+          rightArmRef.current.rotation.x = -0.55 + Math.cos(t * 1.2 + seed) * 0.02;
+          rightArmRef.current.rotation.z = -0.2;
         }
         if (headRef.current) {
-          headRef.current.rotation.y = Math.sin(t * 0.8 + seed) * 0.12;
-          headRef.current.rotation.x = 0.04;
+          headRef.current.rotation.y = Math.sin(t * 0.6 + seed) * 0.1;
+          headRef.current.rotation.x = 0.03;
         }
       }
     } else {
@@ -150,8 +194,8 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
       if (rightLegRef.current) rightLegRef.current.rotation.x = -walkCycle * 0.6;
 
       if (isDelivering) {
-        if (leftArmRef.current) leftArmRef.current.rotation.x = -1.2;
-        if (rightArmRef.current) rightArmRef.current.rotation.x = -1.2;
+        if (leftArmRef.current) leftArmRef.current.rotation.x = -1.1;
+        if (rightArmRef.current) rightArmRef.current.rotation.x = -1.1;
       } else {
         if (leftArmRef.current) leftArmRef.current.rotation.x = -walkCycle * 0.5;
         if (rightArmRef.current) rightArmRef.current.rotation.x = walkCycle * 0.5;
@@ -160,149 +204,316 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
   });
 
   return (
-    <group ref={groupRef} onClick={onSelect}>
-      {/* Interactive Selection Ring on Floor */}
-      {isSelected && (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-          <ringGeometry args={[0.55, 0.64, 32]} />
-          <meshBasicMaterial color="#14b8a6" transparent opacity={0.75} side={THREE.DoubleSide} />
+    <group>
+      {/* 1. Live Desk Monitor with Real-Time Screen Content on Employee's Station */}
+      <group position={[deskX, 0.75, deskZ]} rotation={[0, monitorFacingRotY, 0]}>
+        {/* Leather Blotter Pad */}
+        <mesh position={[0, 0.005, 0.1]} receiveShadow>
+          <boxGeometry args={[0.84, 0.004, 0.44]} />
+          <meshStandardMaterial color="#111827" roughness={0.7} />
         </mesh>
-      )}
-
-      {/* 3D Floating Nameplate and Real-time Status Badge */}
-      <Html position={[0, 1.82, 0]} center zIndexRange={[100, 0]}>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect();
-          }}
-          className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold backdrop-blur-md shadow-sm border cursor-pointer transition select-none ${
-            isSelected
-              ? 'bg-teal-600 text-white border-teal-300 ring-1 ring-teal-400'
-              : 'bg-white/95 text-slate-800 border-white/60 hover:bg-white'
-          }`}
-        >
-          {/* Status Dot */}
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              employee.status === 'working'
-                ? 'bg-emerald-400 animate-pulse'
-                : employee.status === 'thinking'
-                ? 'bg-amber-400 animate-pulse'
-                : 'bg-slate-400'
-            }`}
-          />
-          <span className="whitespace-nowrap font-bold text-[10px]">{employee.name.split(' ')[0]}</span>
-          <span
-            className="text-[8px] px-1 py-0.2 rounded-full text-white font-extrabold uppercase"
-            style={{ backgroundColor: employee.avatarColor }}
-          >
-            {employee.role.split(' ')[0]}
-          </span>
-        </div>
-      </Html>
-
-      {/* Humanoid Body */}
-      <group position={[0, 0, 0]}>
-        {/* Pelvis / Hips */}
-        <mesh position={[0, 0.44, 0]} material={pantsMaterial} castShadow>
-          <boxGeometry args={[0.3, 0.12, 0.24]} />
+        {/* Keyboard */}
+        <mesh position={[0, 0.012, 0.18]} material={chromeMaterial} castShadow>
+          <boxGeometry args={[0.42, 0.008, 0.13]} />
         </mesh>
-
-        {/* Natural Seated Legs: Thigh forward, Shin down to floor */}
-        {/* Left Leg */}
-        <group ref={leftLegRef} position={[-0.1, 0.42, 0]}>
-          {/* Thigh (extends forward horizontally when seated) */}
-          <mesh position={[0, 0, 0.14]} material={pantsMaterial} castShadow>
-            <boxGeometry args={[0.1, 0.1, 0.28]} />
+        {/* Mouse */}
+        <mesh position={[0.29, 0.014, 0.18]} material={chromeMaterial} castShadow>
+          <boxGeometry args={[0.06, 0.012, 0.1]} />
+        </mesh>
+        {/* Monitor Stand */}
+        <mesh position={[0, 0.006, -0.06]} material={chromeMaterial} castShadow>
+          <boxGeometry args={[0.18, 0.006, 0.18]} />
+        </mesh>
+        <mesh position={[0, 0.18, -0.08]} rotation={[-0.1, 0, 0]} material={chromeMaterial} castShadow>
+          <boxGeometry args={[0.08, 0.34, 0.014]} />
+        </mesh>
+        {/* Monitor Housing */}
+        <group position={[0, 0.33, -0.07]} rotation={[-0.07, 0, 0]}>
+          <mesh material={chromeMaterial} castShadow>
+            <boxGeometry args={[0.7, 0.44, 0.018]} />
           </mesh>
-          {/* Shin (drops vertically down towards floor) */}
-          <mesh position={[0, -0.2, 0.27]} material={pantsMaterial} castShadow>
-            <boxGeometry args={[0.09, 0.38, 0.09]} />
+          <mesh position={[0, 0, 0.009]}>
+            <boxGeometry args={[0.68, 0.42, 0.002]} />
+            <meshBasicMaterial color="#080c14" />
           </mesh>
-          {/* Shoe resting on floor */}
-          <mesh position={[0, -0.38, 0.32]} material={new THREE.MeshStandardMaterial({ color: '#090d16', roughness: 0.3 })} castShadow>
-            <boxGeometry args={[0.1, 0.06, 0.18]} />
+          {/* Live glowing display surface */}
+          <mesh position={[0, 0.01, 0.011]}>
+            <planeGeometry args={[0.65, 0.38]} />
+            <meshBasicMaterial map={screenTexture} />
           </mesh>
-        </group>
-
-        {/* Right Leg */}
-        <group ref={rightLegRef} position={[0.1, 0.42, 0]}>
-          <mesh position={[0, 0, 0.14]} material={pantsMaterial} castShadow>
-            <boxGeometry args={[0.1, 0.1, 0.28]} />
-          </mesh>
-          <mesh position={[0, -0.2, 0.27]} material={pantsMaterial} castShadow>
-            <boxGeometry args={[0.09, 0.38, 0.09]} />
-          </mesh>
-          <mesh position={[0, -0.38, 0.32]} material={new THREE.MeshStandardMaterial({ color: '#090d16', roughness: 0.3 })} castShadow>
-            <boxGeometry args={[0.1, 0.06, 0.18]} />
-          </mesh>
-        </group>
-
-        {/* Torso & Suit Jacket */}
-        <group position={[0, 0.72, 0]}>
-          {/* Suit Jacket */}
-          <mesh material={suitMaterial} castShadow receiveShadow>
-            <boxGeometry args={[0.34, 0.42, 0.22]} />
-          </mesh>
-          {/* White Shirt Collar V */}
-          <mesh position={[0, 0.14, 0.112]} material={whiteShirtMaterial}>
-            <boxGeometry args={[0.14, 0.14, 0.01]} />
-          </mesh>
-          {/* Tie */}
-          <mesh position={[0, 0.04, 0.118]} material={new THREE.MeshStandardMaterial({ color: '#0f172a', roughness: 0.4 })}>
-            <boxGeometry args={[0.04, 0.22, 0.005]} />
+          {/* Logo on lower chin */}
+          <mesh position={[0, -0.195, 0.01]} material={chromeMaterial}>
+            <circleGeometry args={[0.008, 16]} />
           </mesh>
         </group>
 
-        {/* Head & Hair */}
-        <group ref={headRef} position={[0, 1.1, 0]}>
-          {/* Neck */}
-          <mesh position={[0, -0.1, 0]} material={skinMaterial}>
-            <cylinderGeometry args={[0.05, 0.06, 0.08, 12]} />
-          </mesh>
-          {/* Face */}
-          <mesh material={skinMaterial} castShadow>
-            <boxGeometry args={[0.2, 0.22, 0.2]} />
-          </mesh>
-          {/* Hair */}
-          <mesh position={[0, 0.08, -0.02]} material={hairMaterial} castShadow>
-            <boxGeometry args={[0.22, 0.14, 0.22]} />
-          </mesh>
-          {/* Eyeglasses */}
-          <mesh position={[0, 0.02, 0.105]} material={new THREE.MeshStandardMaterial({ color: '#0f172a', metalness: 0.9 })}>
-            <boxGeometry args={[0.18, 0.04, 0.01]} />
-          </mesh>
-        </group>
-
-        {/* Left Arm */}
-        <group ref={leftArmRef} position={[-0.22, 0.86, 0]}>
-          <mesh position={[0, -0.15, 0]} material={suitMaterial} castShadow>
-            <boxGeometry args={[0.1, 0.3, 0.1]} />
-          </mesh>
-          <mesh position={[0, -0.32, 0]} material={skinMaterial} castShadow>
-            <boxGeometry args={[0.08, 0.08, 0.08]} />
-          </mesh>
-        </group>
-
-        {/* Right Arm */}
-        <group ref={rightArmRef} position={[0.22, 0.86, 0]}>
-          <mesh position={[0, -0.15, 0]} material={suitMaterial} castShadow>
-            <boxGeometry args={[0.1, 0.3, 0.1]} />
-          </mesh>
-          <mesh position={[0, -0.32, 0]} material={skinMaterial} castShadow>
-            <boxGeometry args={[0.08, 0.08, 0.08]} />
-          </mesh>
-        </group>
-
-        {/* Delivering Document */}
-        {isDelivering && (
-          <group ref={docRef} position={[0, 0.65, 0.28]} rotation={[-0.3, 0, 0]}>
-            <mesh material={new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.2 })} castShadow>
-              <boxGeometry args={[0.24, 0.02, 0.32]} />
+        {/* 3D Stack of Completed Deliverable Documents (Shows when working or has completed task) */}
+        {(employee.status === 'completed' || employee.status === 'working') && (
+          <group position={[-0.48, 0.015, 0.12]} rotation={[0, 0.15, 0]}>
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[0.22, 0.02, 0.3]} />
+              <meshStandardMaterial color="#f8fafc" roughness={0.3} />
+            </mesh>
+            {/* Top document cover with role signature badge */}
+            <mesh position={[0, 0.011, 0]}>
+              <planeGeometry args={[0.2, 0.28]} />
+              <meshStandardMaterial color={employee.avatarColor} roughness={0.4} />
+            </mesh>
+            {/* Silver binder clip */}
+            <mesh position={[0, 0.016, -0.12]} material={chromeMaterial}>
+              <boxGeometry args={[0.04, 0.01, 0.02]} />
             </mesh>
           </group>
         )}
+      </group>
+
+      {/* 2. The Seated Animated Stylized Employee */}
+      <group ref={groupRef} onClick={onSelect}>
+        {/* Floor Selection Glow Ring */}
+        {isSelected && (
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+            <ringGeometry args={[0.55, 0.64, 32]} />
+            <meshBasicMaterial color="#14b8a6" transparent opacity={0.8} side={THREE.DoubleSide} />
+          </mesh>
+        )}
+
+        {/* 3D Floating Nameplate Badge (Smart Responsive Density) */}
+        <Html position={[0, 1.88, 0]} center zIndexRange={[100, 0]}>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect();
+            }}
+            style={{ pointerEvents: 'auto' }}
+            className="select-none"
+          >
+            {isSelected ? (
+              // Selected: Full prominent glass badge with active role tag and glow
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-teal-600 text-white border border-teal-300 ring-2 ring-teal-400 shadow-xl scale-105 cursor-pointer transition">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-ping" />
+                <span className="whitespace-nowrap">{employee.name}</span>
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-teal-800/80 font-mono tracking-wide uppercase">
+                  {employee.role.split(' ')[0]}
+                </span>
+              </div>
+            ) : employee.status === 'working' || employee.status === 'thinking' ? (
+              // Active Work Status Pill
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/95 backdrop-blur-md shadow-md border border-slate-200 text-slate-800 hover:scale-105 cursor-pointer transition">
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    employee.status === 'working'
+                      ? 'bg-emerald-500 animate-pulse'
+                      : 'bg-amber-500 animate-pulse'
+                  }`}
+                />
+                <span className="whitespace-nowrap font-bold text-[11px]">{employee.name}</span>
+                <span className="text-[9px] font-bold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded-full">
+                  {employee.status === 'working' ? 'Writing' : 'Thinking'}
+                </span>
+              </div>
+            ) : (
+              // Unselected & Idle: Minimalist avatar pin dot that blooms on hover
+              <div className="group relative flex items-center justify-center cursor-pointer">
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[9px] font-bold shadow-md border-2 border-white transition-all group-hover:w-auto group-hover:px-2 group-hover:py-0.5 group-hover:gap-1.5"
+                  style={{ backgroundColor: employee.avatarColor }}
+                >
+                  <span>{employee.name.split(' ').map((n) => n[0]).join('')}</span>
+                  <span className="hidden group-hover:inline font-bold text-[10px] whitespace-nowrap">
+                    {employee.name}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </Html>
+
+        {/* Humanoid Body Group */}
+        <group position={[0, 0, 0]}>
+          {/* Pelvis / Hips */}
+          <mesh position={[0, 0.44, 0]} material={pantsMaterial} castShadow>
+            <cylinderGeometry args={[0.16, 0.15, 0.12, 16]} />
+          </mesh>
+
+          {/* Seated Legs */}
+          {/* Left Leg */}
+          <group ref={leftLegRef} position={[-0.11, 0.42, 0]}>
+            {/* Thigh */}
+            <mesh position={[0, 0, 0.14]} material={pantsMaterial} castShadow>
+              <boxGeometry args={[0.11, 0.11, 0.3]} />
+            </mesh>
+            {/* Shin */}
+            <mesh position={[0, -0.2, 0.28]} material={pantsMaterial} castShadow>
+              <cylinderGeometry args={[0.045, 0.04, 0.38, 12]} />
+            </mesh>
+            {/* Oxford Shoe */}
+            <mesh position={[0, -0.38, 0.32]} material={shoeMaterial} castShadow>
+              <boxGeometry args={[0.1, 0.06, 0.18]} />
+            </mesh>
+          </group>
+
+          {/* Right Leg */}
+          <group ref={rightLegRef} position={[0.11, 0.42, 0]}>
+            <mesh position={[0, 0, 0.14]} material={pantsMaterial} castShadow>
+              <boxGeometry args={[0.11, 0.11, 0.3]} />
+            </mesh>
+            <mesh position={[0, -0.2, 0.28]} material={pantsMaterial} castShadow>
+              <cylinderGeometry args={[0.045, 0.04, 0.38, 12]} />
+            </mesh>
+            <mesh position={[0, -0.38, 0.32]} material={shoeMaterial} castShadow>
+              <boxGeometry args={[0.1, 0.06, 0.18]} />
+            </mesh>
+          </group>
+
+          {/* Torso & Tailored Suit Jacket */}
+          <group position={[0, 0.72, 0]}>
+            {/* Tapered Blazer Torso */}
+            <mesh material={suitMaterial} castShadow receiveShadow>
+              <cylinderGeometry args={[0.18, 0.14, 0.44, 16]} />
+            </mesh>
+            {/* White Shirt Collar V */}
+            <mesh position={[0, 0.14, 0.12]} material={whiteShirtMaterial}>
+              <boxGeometry args={[0.12, 0.14, 0.02]} />
+            </mesh>
+            {/* Silk Necktie */}
+            <mesh position={[0, 0.04, 0.135]} material={new THREE.MeshStandardMaterial({ color: '#0f172a', roughness: 0.3 })}>
+              <boxGeometry args={[0.035, 0.22, 0.008]} />
+            </mesh>
+          </group>
+
+          {/* Stylized Sculpted Head & Facial Features */}
+          <group ref={headRef} position={[0, 1.12, 0]}>
+            {/* Neck */}
+            <mesh position={[0, -0.12, 0]} material={skinMaterial}>
+              <cylinderGeometry args={[0.05, 0.06, 0.1, 12]} />
+            </mesh>
+            {/* Smooth Rounded Head */}
+            <mesh material={skinMaterial} scale={[0.95, 1.15, 1.05]} castShadow>
+              <sphereGeometry args={[0.12, 24, 20]} />
+            </mesh>
+
+            {/* Stylized Eyes */}
+            {/* Left Eye */}
+            <group position={[-0.045, 0.02, 0.11]}>
+              <mesh>
+                <sphereGeometry args={[0.016, 12, 12]} />
+                <meshBasicMaterial color="#ffffff" />
+              </mesh>
+              <mesh position={[0, 0, 0.01]}>
+                <sphereGeometry args={[0.009, 12, 12]} />
+                <meshBasicMaterial color="#1e293b" />
+              </mesh>
+            </group>
+            {/* Right Eye */}
+            <group position={[0.045, 0.02, 0.11]}>
+              <mesh>
+                <sphereGeometry args={[0.016, 12, 12]} />
+                <meshBasicMaterial color="#ffffff" />
+              </mesh>
+              <mesh position={[0, 0, 0.01]}>
+                <sphereGeometry args={[0.009, 12, 12]} />
+                <meshBasicMaterial color="#1e293b" />
+              </mesh>
+            </group>
+
+            {/* Eyebrows */}
+            <mesh position={[-0.045, 0.045, 0.115]} rotation={[0, 0, -0.05]}>
+              <boxGeometry args={[0.035, 0.006, 0.005]} />
+              <meshBasicMaterial color={employee.hairColor} />
+            </mesh>
+            <mesh position={[0.045, 0.045, 0.115]} rotation={[0, 0, 0.05]}>
+              <boxGeometry args={[0.035, 0.006, 0.005]} />
+              <meshBasicMaterial color={employee.hairColor} />
+            </mesh>
+
+            {/* Nose Profile */}
+            <mesh position={[0, 0.005, 0.13]}>
+              <coneGeometry args={[0.012, 0.025, 8]} />
+              <meshStandardMaterial color="#f0c2a8" roughness={0.6} />
+            </mesh>
+
+            {/* Sculpted Hairstyle */}
+            <group position={[0, 0.08, -0.02]}>
+              {/* Crown Volume */}
+              <mesh material={hairMaterial} scale={[1.05, 0.7, 1.1]} castShadow>
+                <sphereGeometry args={[0.13, 20, 16]} />
+              </mesh>
+              {/* Side Hair */}
+              <mesh position={[-0.1, -0.02, 0.02]} material={hairMaterial}>
+                <boxGeometry args={[0.04, 0.1, 0.12]} />
+              </mesh>
+              <mesh position={[0.1, -0.02, 0.02]} material={hairMaterial}>
+                <boxGeometry args={[0.04, 0.1, 0.12]} />
+              </mesh>
+              {/* Back Hair */}
+              <mesh position={[0, -0.04, -0.08]} material={hairMaterial}>
+                <boxGeometry args={[0.18, 0.12, 0.06]} />
+              </mesh>
+            </group>
+
+            {/* Designer Glasses Frame (for specific specialists) */}
+            {(employee.role === 'GTM Engineer' || employee.role === 'SEO/AEO Specialist') && (
+              <group position={[0, 0.02, 0.12]}>
+                <mesh material={chromeMaterial}>
+                  <torusGeometry args={[0.025, 0.004, 8, 16]} />
+                </mesh>
+                <mesh position={[-0.045, 0, 0]} material={chromeMaterial}>
+                  <torusGeometry args={[0.024, 0.003, 8, 16]} />
+                </mesh>
+                <mesh position={[0.045, 0, 0]} material={chromeMaterial}>
+                  <torusGeometry args={[0.024, 0.003, 8, 16]} />
+                </mesh>
+                <mesh position={[0, 0, 0]} material={chromeMaterial}>
+                  <boxGeometry args={[0.03, 0.004, 0.004]} />
+                </mesh>
+              </group>
+            )}
+          </group>
+
+          {/* Articulated Arms & Hands Resting on Desk */}
+          {/* Left Arm */}
+          <group ref={leftArmRef} position={[-0.24, 0.88, 0]}>
+            <mesh position={[0, -0.15, 0.06]} rotation={[0.4, 0, 0]} material={suitMaterial} castShadow>
+              <cylinderGeometry args={[0.042, 0.036, 0.32, 12]} />
+            </mesh>
+            {/* Forearm angled forward onto desk */}
+            <mesh position={[0, -0.28, 0.22]} rotation={[-0.7, 0, 0]} material={suitMaterial} castShadow>
+              <cylinderGeometry args={[0.036, 0.032, 0.28, 12]} />
+            </mesh>
+            {/* Hand resting on keyboard */}
+            <group ref={leftHandRef} position={[0, -0.38, 0.32]}>
+              <mesh material={skinMaterial} castShadow>
+                <boxGeometry args={[0.06, 0.025, 0.07]} />
+              </mesh>
+            </group>
+          </group>
+
+          {/* Right Arm */}
+          <group ref={rightArmRef} position={[0.24, 0.88, 0]}>
+            <mesh position={[0, -0.15, 0.06]} rotation={[0.4, 0, 0]} material={suitMaterial} castShadow>
+              <cylinderGeometry args={[0.042, 0.036, 0.32, 12]} />
+            </mesh>
+            {/* Forearm angled forward onto desk */}
+            <mesh position={[0, -0.28, 0.22]} rotation={[-0.7, 0, 0]} material={suitMaterial} castShadow>
+              <cylinderGeometry args={[0.036, 0.032, 0.28, 12]} />
+            </mesh>
+            {/* Hand resting on mouse/keyboard */}
+            <group ref={rightHandRef} position={[0, -0.38, 0.32]}>
+              <mesh material={skinMaterial} castShadow>
+                <boxGeometry args={[0.06, 0.025, 0.07]} />
+              </mesh>
+            </group>
+          </group>
+
+          {/* Delivering Document in Hands */}
+          {isDelivering && (
+            <group ref={docRef} position={[0, 0.65, 0.32]} rotation={[-0.3, 0, 0]}>
+              <mesh material={new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.2 })} castShadow>
+                <boxGeometry args={[0.24, 0.02, 0.32]} />
+              </mesh>
+            </group>
+          )}
+        </group>
       </group>
     </group>
   );

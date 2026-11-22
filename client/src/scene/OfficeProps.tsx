@@ -271,25 +271,21 @@ export const DeskPod: React.FC<{
         <boxGeometry args={[3.45, 0.32, 0.03]} />
       </mesh>
 
-      {/* Desk 1 (Front Left) */}
+      {/* Desk 1 (Front Left) - Chair facing desk towards -z */}
       <ModernDesk position={[-0.88, 0, 0.48]} />
-      <DesktopMonitor position={[-0.88, 0.75, 0.42]} rotationY={0} />
-      <OfficeChair position={[-0.88, 0, 1.15]} rotation={[0, 0, 0]} />
+      <OfficeChair position={[-0.88, 0, 1.08]} rotation={[0, Math.PI, 0]} />
 
-      {/* Desk 2 (Front Right) */}
+      {/* Desk 2 (Front Right) - Chair facing desk towards -z */}
       <ModernDesk position={[0.88, 0, 0.48]} />
-      <DesktopMonitor position={[0.88, 0.75, 0.42]} rotationY={0} />
-      <OfficeChair position={[0.88, 0, 1.15]} rotation={[0, 0, 0]} />
+      <OfficeChair position={[0.88, 0, 1.08]} rotation={[0, Math.PI, 0]} />
 
-      {/* Desk 3 (Back Left, facing front) */}
+      {/* Desk 3 (Back Left, facing desk towards +z) */}
       <ModernDesk position={[-0.88, 0, -0.48]} />
-      <DesktopMonitor position={[-0.88, 0.75, -0.42]} rotationY={Math.PI} />
-      <OfficeChair position={[-0.88, 0, -1.15]} rotation={[0, Math.PI, 0]} />
+      <OfficeChair position={[-0.88, 0, -1.08]} rotation={[0, 0, 0]} />
 
-      {/* Desk 4 (Back Right, facing front) */}
+      {/* Desk 4 (Back Right, facing desk towards +z) */}
       <ModernDesk position={[0.88, 0, -0.48]} />
-      <DesktopMonitor position={[0.88, 0.75, -0.42]} rotationY={Math.PI} />
-      <OfficeChair position={[0.88, 0, -1.15]} rotation={[0, Math.PI, 0]} />
+      <OfficeChair position={[0.88, 0, -1.08]} rotation={[0, 0, 0]} />
 
       {/* Black Paper Shredder / Waste Bin with silver handle under desk */}
       <group position={[0, 0, 0.38]}>
@@ -309,31 +305,37 @@ export const DeskPod: React.FC<{
   );
 };
 
-// Suspended Linear Pendant Light
+// Suspended Linear Pendant Light matching reference photo
 export const LinearPendantLight: React.FC<{
   position: [number, number, number];
   length?: number;
-}> = ({ position, length = 3.8 }) => {
+  orientation?: 'x' | 'z';
+}> = ({ position, length = 6.8, orientation = 'z' }) => {
+  const isZ = orientation === 'z';
   return (
     <group position={position}>
-      {/* Slim white housing */}
-      <mesh material={new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.2 })} castShadow>
-        <boxGeometry args={[length, 0.12, 0.14]} />
+      {/* Slim white architectural housing */}
+      <mesh material={new THREE.MeshStandardMaterial({ color: '#f8fafc', roughness: 0.2 })} castShadow>
+        <boxGeometry args={isZ ? [0.12, 0.1, length] : [length, 0.1, 0.12]} />
       </mesh>
-      {/* Downward light diffuser */}
-      <mesh position={[0, -0.061, 0]}>
-        <planeGeometry args={[length - 0.05, 0.12]} />
+      {/* Downward luminous frosted LED diffuser */}
+      <mesh position={[0, -0.051, 0]} rotation={isZ ? [Math.PI / 2, 0, 0] : [Math.PI / 2, 0, 0]}>
+        <planeGeometry args={isZ ? [0.1, length - 0.04] : [length - 0.04, 0.1]} />
         <meshStandardMaterial
           color="#ffffff"
           emissive="#ffffff"
-          emissiveIntensity={1.8}
+          emissiveIntensity={2.0}
           side={THREE.DoubleSide}
         />
       </mesh>
-      {/* Aircraft suspension cables */}
-      {[-length / 2 + 0.3, length / 2 - 0.3].map((cx, i) => (
-        <mesh key={i} position={[cx, 0.5, 0]} material={chromeMaterial}>
-          <cylinderGeometry args={[0.003, 0.003, 1.0, 8]} />
+      {/* Chrome aircraft suspension cables to ceiling */}
+      {[-length / 2 + 0.4, 0, length / 2 - 0.4].map((coord, i) => (
+        <mesh
+          key={i}
+          position={isZ ? [0, 0.5, coord] : [coord, 0.5, 0]}
+          material={chromeMaterial}
+        >
+          <cylinderGeometry args={[0.002, 0.002, 1.0, 8]} />
         </mesh>
       ))}
     </group>
@@ -403,13 +405,16 @@ export const FiddleLeafPlant: React.FC<{ position: [number, number, number] }> =
 };
 
 // Dark Charcoal Cabinetry Wall with Shelf Lighting, Binders, and Central Task Board
-export const CabinetWall: React.FC<{ position: [number, number, number] }> = ({ position }) => {
+export const CabinetWall: React.FC<{
+  position: [number, number, number];
+  rotation?: [number, number, number];
+}> = ({ position, rotation = [0, 0, 0] }) => {
   return (
-    <group position={position}>
-      {/* Dark graphite cabinetry body */}
+    <group position={position} rotation={rotation}>
+      {/* Dark graphite cabinetry body matching reference photo */}
       <mesh position={[0, 1.9, 0]} receiveShadow>
-        <boxGeometry args={[10, 3.8, 0.6]} />
-        <meshStandardMaterial color="#262b32" roughness={0.65} metalness={0.15} />
+        <boxGeometry args={[15, 3.8, 0.6]} />
+        <meshStandardMaterial color="#22262d" roughness={0.65} metalness={0.15} />
       </mesh>
 
       {/* Left Shelving */}

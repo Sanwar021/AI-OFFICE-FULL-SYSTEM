@@ -50,6 +50,23 @@ export const App: React.FC = () => {
         <TaskInspector />
       </div>
 
+      {/* Desktop Bottom Status Pill (>= 1024px) */}
+      <div className="hidden lg:flex fixed bottom-4 left-1/2 -translate-x-1/2 z-20 items-center gap-3 px-4 py-2 bg-white/85 backdrop-blur-xl border border-white/70 shadow-xl rounded-full pointer-events-auto select-none text-xs text-slate-700">
+        <span className="flex items-center gap-1.5 font-bold text-slate-900">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+          Chief of Staff Active
+        </span>
+        <span className="text-slate-300">•</span>
+        <span className="text-slate-600 font-medium">8 Specialists Online</span>
+        <span className="text-slate-300">•</span>
+        <button
+          onClick={() => setIsRoutinesOpen(true)}
+          className="text-teal-700 font-bold hover:text-teal-600 transition cursor-pointer"
+        >
+          Morning Routine Brief →
+        </button>
+      </div>
+
       {/* Mobile / Tablet Bottom Quick Action Bar (< 1024px) */}
       <nav
         aria-label="Mobile Controls"

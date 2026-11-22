@@ -142,7 +142,17 @@ export const RoomArchitecture: React.FC<RoomArchitectureProps> = ({ isEvening })
         </mesh>
       </group>
 
-      {/* 5. Exterior Backdrop: Bright city skyline & adjacent modern glass building facade */}
+      {/* 5. Back Wall: Clean modern architectural wall matching reference photo */}
+      <mesh position={[0, 1.9, -8.5]} receiveShadow>
+        <planeGeometry args={[18, 3.8]} />
+        <meshStandardMaterial color="#f8fafc" roughness={0.35} />
+      </mesh>
+      {/* Recessed Architectural Baseboard along back wall */}
+      <mesh position={[0, 0.08, -8.45]} material={whiteFrameMaterial}>
+        <boxGeometry args={[18, 0.16, 0.04]} />
+      </mesh>
+
+      {/* 6. Exterior Backdrop: Bright city skyline & adjacent modern glass building facade */}
       <mesh position={[13.5, 3.2, 0]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[26, 12]} />
         <meshBasicMaterial map={exteriorTexture} />

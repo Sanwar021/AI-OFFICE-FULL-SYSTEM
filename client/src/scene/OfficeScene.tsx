@@ -23,7 +23,7 @@ export const OfficeScene: React.FC = () => {
       <Canvas
         shadows
         camera={{
-          position: [-4.2, 3.1, 6.8],
+          position: [-2.8, 2.6, 6.2],
           fov: 48,
           near: 0.1,
           far: 50,
@@ -60,19 +60,19 @@ export const OfficeScene: React.FC = () => {
             />
           ))}
 
-          {/* Suspended Minimalist Linear Pendant Lights over desk pods */}
-          <LinearPendantLight position={[0, 2.8, 1.5]} length={3.8} />
-          <LinearPendantLight position={[0, 2.8, -2.5]} length={3.8} />
+          {/* Suspended Minimalist Linear Pendant Lights hanging along desk rows matching reference photo */}
+          <LinearPendantLight position={[-0.88, 2.7, -0.5]} length={7.2} orientation="z" />
+          <LinearPendantLight position={[0.88, 2.7, -0.5]} length={7.2} orientation="z" />
 
-          {/* Lush Fiddle Leaf Fig trees by window sill */}
+          {/* Lush Fiddle Leaf Fig trees by window sill matching reference photo */}
           <FiddleLeafPlant position={[6.6, 0, 2.2]} />
-          <FiddleLeafPlant position={[6.6, 0, -3.5]} />
+          <FiddleLeafPlant position={[6.6, 0, -2.5]} />
 
-          {/* Dark Charcoal Cabinetry Wall with Shelving */}
-          <CabinetWall position={[0, 0, -6.8]} />
+          {/* Dark Charcoal Cabinetry Wall along the Left Wall with Shelving matching reference photo */}
+          <CabinetWall position={[-4.2, 0, 0]} rotation={[0, Math.PI / 2, 0]} />
 
-          {/* Interactive Wall-Mounted 65" Real-Time Task Board on back wall */}
-          <WallTaskBoard position={[0, 2.1, -6.48]} />
+          {/* Interactive 65" Real-Time Task Board on central feature wall */}
+          <WallTaskBoard position={[-3.88, 2.1, 0]} rotation={[0, Math.PI / 2, 0]} />
         </Suspense>
       </Canvas>
     </div>

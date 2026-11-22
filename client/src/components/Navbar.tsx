@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useOfficeStore } from '../store/useOfficeStore';
-import { Sun, Moon, Video, Users, User, Plus, Settings, Menu, Sparkles, AlertTriangle, Clock } from 'lucide-react';
+import {
+  Sun,
+  Moon,
+  Video,
+  Users,
+  User,
+  Plus,
+  Settings,
+  Menu,
+  Sparkles,
+  AlertTriangle,
+  Clock,
+  Compass,
+} from 'lucide-react';
 
 interface NavbarProps {
   onOpenApprovals: () => void;
@@ -12,6 +25,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
   const toggleTimeOfDay = useOfficeStore((state) => state.toggleTimeOfDay);
   const cameraPreset = useOfficeStore((state) => state.cameraPreset);
   const setCameraPreset = useOfficeStore((state) => state.setCameraPreset);
+  const isTourActive = useOfficeStore((state) => state.isTourActive);
+  const toggleTour = useOfficeStore((state) => state.toggleTour);
   const setIsNewTaskModalOpen = useOfficeStore((state) => state.setIsNewTaskModalOpen);
   const setIsSettingsModalOpen = useOfficeStore((state) => state.setIsSettingsModalOpen);
   const isMobileDrawerOpen = useOfficeStore((state) => state.isMobileDrawerOpen);
@@ -67,12 +82,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         </div>
       </div>
 
-      {/* Center: Camera Presets (Desktop & Laptop >= 1024px) */}
+      {/* Center: Camera Presets & Cinematic Tour (Desktop & Laptop >= 1024px) */}
       <div className="hidden lg:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/60 shadow-inner">
         <button
           onClick={() => setCameraPreset('overview')}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
-            cameraPreset === 'overview'
+            cameraPreset === 'overview' && !isTourActive
               ? 'bg-white text-slate-900 shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
@@ -84,7 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         <button
           onClick={() => setCameraPreset('team')}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
-            cameraPreset === 'team'
+            cameraPreset === 'team' && !isTourActive
               ? 'bg-white text-slate-900 shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
@@ -96,7 +111,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         <button
           onClick={() => setCameraPreset('follow')}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
-            cameraPreset === 'follow'
+            cameraPreset === 'follow' && !isTourActive
               ? 'bg-white text-slate-900 shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
@@ -104,6 +119,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenApprovals, onOpenRoutines 
         >
           <User className="w-3.5 h-3.5 text-teal-600" />
           Follow Desk
+        </button>
+
+        {/* 360° Cinematic Tour Toggle */}
+        <button
+          onClick={toggleTour}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer min-h-[36px] ${
+            isTourActive
+              ? 'bg-teal-600 text-white shadow-xs animate-pulse font-bold'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+          title="Toggle Cinematic 360° Auto-Orbit"
+          aria-label="Toggle Cinematic 360 Tour"
+        >
+          <Compass className={`w-3.5 h-3.5 ${isTourActive ? 'text-white animate-spin' : 'text-teal-600'}`} />
+          360° Tour
         </button>
       </div>
 

@@ -3,7 +3,10 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useOfficeStore } from '../store/useOfficeStore';
 
-export const WallTaskBoard: React.FC<{ position: [number, number, number] }> = ({ position }) => {
+export const WallTaskBoard: React.FC<{
+  position: [number, number, number];
+  rotation?: [number, number, number];
+}> = ({ position, rotation = [0, 0, 0] }) => {
   const tasks = useOfficeStore((state) => state.tasks);
 
   const { ctx, texture } = useMemo(() => {
@@ -100,7 +103,7 @@ export const WallTaskBoard: React.FC<{ position: [number, number, number] }> = (
   });
 
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       {/* 65" Screen Display */}
       <mesh position={[0, 0, 0.03]}>
         <planeGeometry args={[2.5, 1.4]} />

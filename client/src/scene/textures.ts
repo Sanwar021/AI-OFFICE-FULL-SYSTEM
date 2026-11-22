@@ -164,3 +164,121 @@ export function createExteriorSkylineTexture(isEvening: boolean): THREE.CanvasTe
   const texture = new THREE.CanvasTexture(canvas);
   return texture;
 }
+
+// Procedural dynamic 3D screen texture for desktop monitors
+export function createScreenTexture(
+  employeeName: string,
+  role: string,
+  status: string,
+  monitorContent?: string
+): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 320;
+  const ctx = canvas.getContext('2d')!;
+
+  // Dark IDE / terminal background
+  ctx.fillStyle = '#090d16';
+  ctx.fillRect(0, 0, 512, 320);
+
+  // Top window header
+  ctx.fillStyle = '#131b2e';
+  ctx.fillRect(0, 0, 512, 32);
+
+  // Window dots (red, amber, emerald)
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath();
+  ctx.arc(16, 16, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#f59e0b';
+  ctx.beginPath();
+  ctx.arc(32, 16, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#10b981';
+  ctx.beginPath();
+  ctx.arc(48, 16, 5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Header Title
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = 'bold 12px monospace';
+  ctx.fillText(`${employeeName.toUpperCase()} — ${role}`, 68, 20);
+
+  // Status Pill in header
+  ctx.fillStyle = status === 'working' ? '#10b981' : status === 'thinking' ? '#f59e0b' : '#64748b';
+  ctx.beginPath();
+  ctx.arc(485, 16, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (status === 'working') {
+    // Live code / work stream screen
+    ctx.fillStyle = '#0d9488';
+    ctx.font = '12px monospace';
+    ctx.fillText('⚡ GEMINI-3.8-FLASH ENGINE RUNNING', 20, 60);
+
+    // Simulated or real code lines
+    const lines = monitorContent
+      ? monitorContent.slice(0, 300).split('\n').slice(0, 8)
+      : [
+          'import { pipeline, streamTask } from "@google/genai";',
+          'const context = await retrieveKnowledgeBase();',
+          'export async function executeStrategy() {',
+          '  const plan = await synthesizeDeliverable({',
+          '    targetAudience: "Enterprise B2B",',
+          '    compliance: "Verified",',
+          '  });',
+          '  await save_file("Q1_Strategy.md", plan);',
+          '} // 100% tokens parsed',
+        ];
+
+    ctx.fillStyle = '#38bdf8';
+    lines.forEach((line, i) => {
+      ctx.fillStyle = i % 2 === 0 ? '#38bdf8' : '#a7f3d0';
+      ctx.fillText(line, 20, 90 + i * 20);
+    });
+
+    // Glowing progress bar at bottom
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(20, 280, 472, 14);
+    ctx.fillStyle = '#14b8a6';
+    ctx.fillRect(20, 280, 360, 14);
+  } else if (status === 'thinking') {
+    // Neural thinking network
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 14px monospace';
+    ctx.fillText('🧠 DECONSTRUCTING MULTI-STEP OBJECTIVE...', 20, 70);
+
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = '12px monospace';
+    ctx.fillText('> Analyzing constraints & specialist dependencies', 20, 110);
+    ctx.fillText('> Calculating parallel execution DAG', 20, 135);
+    ctx.fillText('> Formatting structured JSON plan', 20, 160);
+
+    // Glowing amber pulse bar
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(20, 220, 472, 6);
+  } else {
+    // Sleek idle workspace screen
+    ctx.fillStyle = '#334155';
+    ctx.font = 'bold 36px sans-serif';
+    ctx.fillText('09:41', 200, 120);
+
+    ctx.fillStyle = '#64748b';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('AI OFFICE • STATION ACTIVE', 165, 150);
+
+    ctx.fillStyle = '#14b8a6';
+    ctx.font = '11px monospace';
+    ctx.fillText('Ready for assignment via Chief of Staff', 140, 185);
+
+    // Minimalist terminal prompt at bottom
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(20, 230, 472, 50);
+    ctx.fillStyle = '#22c55e';
+    ctx.font = '12px monospace';
+    ctx.fillText('$ waiting for task dispatch...', 35, 260);
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  return texture;
+}

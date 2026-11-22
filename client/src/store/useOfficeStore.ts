@@ -38,6 +38,11 @@ interface OfficeState {
   isInspectorOpen: boolean;
   setIsInspectorOpen: (open: boolean) => void;
   toggleInspector: () => void;
+  isRosterCollapsed: boolean;
+  toggleRosterCollapse: () => void;
+  isTourActive: boolean;
+  setIsTourActive: (active: boolean) => void;
+  toggleTour: () => void;
 }
 
 const initialEmployees: Employee[] = [
@@ -212,4 +217,9 @@ export const useOfficeStore = create<OfficeState>((set) => ({
   isInspectorOpen: false,
   setIsInspectorOpen: (open) => set({ isInspectorOpen: open }),
   toggleInspector: () => set((state) => ({ isInspectorOpen: !state.isInspectorOpen })),
+  isRosterCollapsed: false,
+  toggleRosterCollapse: () => set((state) => ({ isRosterCollapsed: !state.isRosterCollapsed })),
+  isTourActive: false,
+  setIsTourActive: (active) => set({ isTourActive: active }),
+  toggleTour: () => set((state) => ({ isTourActive: !state.isTourActive, cameraPreset: 'overview' })),
 }));

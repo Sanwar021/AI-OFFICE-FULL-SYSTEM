@@ -33,8 +33,8 @@ async function run() {
 
   const page = await browser.newPage();
 
-  console.log('Navigating to http://localhost:5173...');
-  await page.goto('http://localhost:5173', { waitUntil: 'domcontentloaded' });
+  console.log('Navigating to http://localhost:5174...');
+  await page.goto('http://localhost:5174', { waitUntil: 'domcontentloaded' });
   await new Promise((r) => setTimeout(r, 3000));
 
   for (const vp of viewports) {
