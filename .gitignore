@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Production builds
+dist/
+*/dist/
+build/
+*/build/
+
+# Environment files - NEVER commit secrets
+.env
+*/.env
+*.env.local
+
+# Databases and storage
+database/*.db
+database/*.db-wal
+database/*.db-shm
+
+# Workspace output files
+workspace/*
+!workspace/.gitkeep
+
+# System & IDE files
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
