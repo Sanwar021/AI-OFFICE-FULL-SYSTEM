@@ -35,7 +35,7 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({ onPlanGenerated }) =
         setNewTaskInitialPrompt('');
       }
     }
-  }, [isNewTaskModalOpen, newTaskInitialPrompt, selectedEmployeeId]);
+  }, [isNewTaskModalOpen, newTaskInitialPrompt, selectedEmployeeId, setNewTaskInitialPrompt]);
 
   if (!isNewTaskModalOpen) return null;
 

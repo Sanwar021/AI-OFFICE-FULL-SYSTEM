@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useOfficeStore } from '../store/useOfficeStore';
@@ -9,7 +9,7 @@ export const WallTaskBoard: React.FC<{
 }> = ({ position, rotation = [0, 0, 0] }) => {
   const tasks = useOfficeStore((state) => state.tasks);
 
-  const { ctx, texture } = useMemo(() => {
+  const [board] = useState(() => {
     const c = document.createElement('canvas');
     c.width = 1536;
     c.height = 864; // 16:9 high-DPI
@@ -18,9 +18,11 @@ export const WallTaskBoard: React.FC<{
     tex.generateMipmaps = true;
     tex.minFilter = THREE.LinearMipmapLinearFilter;
     return { ctx: context, texture: tex };
-  }, []);
+  });
 
   useFrame(() => {
+    const { ctx, texture } = board;
+
     // Render Task Board on canvas
     ctx.fillStyle = '#090d16';
     ctx.fillRect(0, 0, 1536, 864);
@@ -108,7 +110,7 @@ export const WallTaskBoard: React.FC<{
       {/* 65" Screen Display */}
       <mesh position={[0, 0, 0.03]}>
         <planeGeometry args={[2.5, 1.4]} />
-        <meshBasicMaterial map={texture} />
+        <meshBasicMaterial map={board.texture} />
       </mesh>
     </group>
   );

@@ -67,5 +67,5 @@ export function useSSE() {
       if (eventSource) eventSource.close();
       if (reconnectTimeout) clearTimeout(reconnectTimeout);
     };
-  }, []);
+  }, [addTask, appendTaskStream, updateEmployeeMonitor, updateEmployeeStatus, updateTask]);
 }

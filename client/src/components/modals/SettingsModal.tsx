@@ -18,13 +18,6 @@ export const SettingsModal: React.FC = () => {
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  useEffect(() => {
-    if (isSettingsModalOpen) {
-      fetchSettings();
-      fetchFiles();
-    }
-  }, [isSettingsModalOpen]);
-
   const fetchSettings = async () => {
     try {
       const res = await fetch('/api/settings');
@@ -45,6 +38,13 @@ export const SettingsModal: React.FC = () => {
       // ignore
     }
   };
+
+  useEffect(() => {
+    if (isSettingsModalOpen) {
+      fetchSettings();
+      fetchFiles();
+    }
+  }, [isSettingsModalOpen]);
 
   const handleTestConnection = async () => {
     setIsTesting(true);
